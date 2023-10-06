@@ -1,0 +1,71 @@
+body {
+    margin: 0;
+}
+
+.square-button {
+    width: 60px;  /* You can adjust this as per your requirement */
+    height: 100%;
+    background-color: black;  /* Default button color */
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    outline: none;
+    border-radius: 0;
+}
+
+.square-button:hover {
+    background-color: white;  /* Color when button is highlighted */
+}
+
+.login-button {
+    background-color: #000000;
+    color: #ffffff;
+    width: 80px;
+    height: 40px;
+    border-radius: 0px;
+    border: 0px;
+    /* padding: 5px 15px; */
+    margin-right: 10px;
+    cursor: pointer;
+    outline: none;
+    text-align: center;
+    padding: 0;
+}
+
+.login-button:hover {
+    background-color: #f5f5f5;
+    color: black;
+}
+
+.top-bar {
+    background-color: black;
+    height: 60px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;  /* This will push child items to the edges */
+    align-items: center;
+    /* padding: 0 20px; */
+}
+
+.plus {
+    --b: 3px; /* the thickness */
+    height: 24px;
+    width: 24px; /* the size */
+    aspect-ratio: 1;
+    border: 18px solid #000; /* the outer space */
+    background:
+        conic-gradient(from 90deg at var(--b) var(--b),black 90deg,white 0) 
+        calc(100% + var(--b)/2) calc(100% + var(--b)/2)/
+        calc(50%  + var(--b))   calc(50%  + var(--b));
+    /* display: inline-block; */
+}
+
+.plus:hover {
+    border: 10px solid white; /* the outer space */
+    background:
+        conic-gradient(from 90deg at var(--b) var(--b),white 90deg,black 0) 
+        calc(100% + var(--b)/2) calc(100% + var(--b)/2)/
+        calc(50%  + var(--b))   calc(50%  + var(--b));
+}

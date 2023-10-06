@@ -1,4 +1,5 @@
 from dash import Dash, html, dcc, callback, Output, Input, dash_table
+
 import plotly.express as px
 import pandas as pd
 import data
@@ -17,42 +18,105 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = Dash(__name__, external_stylesheets=external_stylesheets)
 
 # App layout
-app.layout = html.Div(style={'height': '100vh', 'margin': '0', 'width': '100vw'}, children=[
+app.layout = html.Div(style={'display': 'flex', 'flexDirection': 'column', 'height': '100vh'}, children=[
+    
+    # Black top bar
+    html.Div(className='top-bar', children=[
+        # html.H1('Top Bar', style={'color': 'white', 'width': '200px'}),
 
-    # New vertical column div on the left
-    # html.Div(style={'backgroundColor': 'black', 'width': '100px', 'height': '100%'}),
+        html.Div(style={'height': '100%', 'width': '300px', 'display': 'flex'}, children=[
+            html.Button(style={'margin-left': '30px'},
+                children=[
+                    html.Img(src='/assets/sigma_logo.jpeg', id='overlay-image1', 
+                        style={'margin-top': '0px', 'margin-left': '0px', 'width': '30px', 'height': '30px', 'border-radius': '50%', 'border': '2px solid #ffffff'}),
+                ],
+                className='square-button'
+            ),
+            html.Button(
+                children=[
+                    html.Img(src='/assets/john_face.png', id='overlay-image2', 
+                        style={'margin-top': '0px', 'margin-left': '0px', 'width': '30px', 'height': '30px', 'border-radius': '50%', 'border': '2px solid #00b7ff'})
+                ],
+                className='square-button'
+            ),
 
-    # The rest of your layout
-    html.Div(children=[
-        
-        html.Div(children=[
-            html.Img(src='/assets/sigma_logo.jpeg', id='overlay-image1', 
-                     style={'margin-top': '3px', 'margin-left': '10px', 'width': '30px', 'height': '30px', 'border-radius': '50%', 'border': '2px solid #ffffff'}),
-            
-            html.Img(src='/assets/john_face.png', id='overlay-image2', 
-                     style={'margin-top': '3px', 'margin-left': '10px', 'width': '30px', 'height': '30px', 'border-radius': '50%', 'border': '2px solid #00b7ff'})
-        ],
-        style={'textAlign': 'left', 'color': 'blue', 'fontSize': 30, 'background-color': 'black', 
-               'padding': 0, 'width': '100%', 'height': '40px'}),
-
-        html.Div(className='row', children=[
-            dcc.RadioItems(options=['pop', 'lifeExp', 'gdpPercap'],
-                           value='lifeExp',
-                           inline=True,
-                           id='my-radio-buttons-final')
+            html.Button(
+                children=[
+                    html.Div(className='plus'),
+                    # html.Img(src='/assets/pixil-frame-0 (1).png', id='overlay-image2', 
+                    #     style={'margin-top': '0px', 'margin-left': '0px', 'width': '20px', 'height': '20px', 'fill': 'white'})
+                ],
+                className='square-button'
+            ),
         ]),
+        # Log In button
+        html.Button('Sign In', className='login-button')
 
-        html.Div(className='row', children=[
-            html.Div(className='six columns', children=[
-                dash_table.DataTable(data=df.to_dict('records'), page_size=11, style_table={'overflowX': 'auto'})
+    ]),
+    
+    # Main content area with sidebar and grid
+    html.Div(style={'display': 'flex', 'flexDirection': 'row', 'flex': '1'}, children=[
+        
+        # Black left sidebar
+        html.Div(style={'backgroundColor': 'black', 'width': '20%', 'height': '90vh'}, children=[
+            html.H1('Sidebar', style={'color': 'white'})
+        ]),
+        
+        # 2x4 grid
+        html.Div(style={'flex': '1', 'display': 'flex', 'flexWrap': 'wrap', 'justifyContent': 'space-between'}, children=[
+            html.Div(style={'flex': '1'}, children=[
+                html.Div(['Cell 1-1'], style={'border': '1px solid', 'height': '20vh'}),
+                html.Div(['Cell 2-1'], style={'border': '1px solid', 'height': '20vh'}),
+                html.Div(['Cell 3-1'], style={'border': '1px solid', 'height': '20vh'}),
+                html.Div(['Cell 4-1'], style={'border': '1px solid', 'height': '20vh'}),
             ]),
-            html.Div(className='six columns', children=[
-                dcc.Graph(figure={}, id='histo-chart-final')
+            
+            html.Div(style={'flex': '1'}, children=[
+                html.Div(['Cell 1-2'], style={'border': '1px solid', 'height': '20vh'}),
+                html.Div(['Cell 2-2'], style={'border': '1px solid', 'height': '20vh'}),
+                html.Div(['Cell 3-2'], style={'border': '1px solid', 'height': '20vh'}),
+                html.Div(['Cell 4-2'], style={'border': '1px solid', 'height': '20vh'}),
             ])
         ])
-
     ])
 ])
+
+# html.Div(style={'height': '100vh', 'margin': '0', 'width': '100vw'}, children=[
+
+#     # New vertical column div on the left
+#     # html.Div(style={'backgroundColor': 'black', 'width': '100px', 'height': '100%'}),
+
+#     # The rest of your layout
+#     html.Div(children=[
+        
+#         html.Div(children=[
+#             html.Img(src='/assets/sigma_logo.jpeg', id='overlay-image1', 
+#                      style={'margin-top': '3px', 'margin-left': '10px', 'width': '30px', 'height': '30px', 'border-radius': '50%', 'border': '2px solid #ffffff'}),
+            
+#             html.Img(src='/assets/john_face.png', id='overlay-image2', 
+#                      style={'margin-top': '3px', 'margin-left': '10px', 'width': '30px', 'height': '30px', 'border-radius': '50%', 'border': '2px solid #00b7ff'})
+#         ],
+#         style={'textAlign': 'left', 'color': 'blue', 'fontSize': 30, 'background-color': 'black', 
+#                'padding': 0, 'width': '100%', 'height': '40px'}),
+
+#         html.Div(className='row', children=[
+#             dcc.RadioItems(options=['pop', 'lifeExp', 'gdpPercap'],
+#                            value='lifeExp',
+#                            inline=True,
+#                            id='my-radio-buttons-final')
+#         ]),
+
+#         html.Div(className='row', children=[
+#             html.Div(className='six columns', children=[
+#                 dash_table.DataTable(data=df.to_dict('records'), page_size=11, style_table={'overflowX': 'auto'})
+#             ]),
+#             html.Div(className='six columns', children=[
+#                 dcc.Graph(figure={}, id='histo-chart-final')
+#             ])
+#         ])
+
+#     ])
+# ])
 
 # Add controls to build the interaction
 @callback(
@@ -65,4 +129,4 @@ def update_graph(col_chosen):
 
 # Run the app
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
