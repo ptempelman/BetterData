@@ -99,10 +99,34 @@ app.layout = html.Div(style={'display': 'flex', 'flexDirection': 'column', 'heig
         # The modal (popup)
         dbc.Modal([
             dbc.ModalHeader("Header"),
-            dbc.ModalBody("Your content here", className='modal-body'),
+            dbc.ModalBody(className='modal-body', children=[
+                html.Div([
+                    dcc.Dropdown(
+                        id='xaxis-column',
+                        options=[{'label': col, 'value': col} for col in df.columns],
+                        className='dropdown',
+                        value='A',
+                        searchable=True,
+                        placeholder='x-axis'
+                    ),
+                    dcc.Dropdown(
+                        id='yaxis-column',
+                        options=[{'label': col, 'value': col} for col in df.columns],
+                        className='dropdown',
+                        value='B',
+                        searchable=True,
+                        placeholder='y-axis'
+                    )
+                ]),
+            ]),
+
             dbc.ModalFooter(
-                dbc.Button("Close", id="close-button", className="ml-auto")
+                dbc.Button("Add", id="close-button", className="ml-auto")
             )
+            
+            # dbc.ModalFooter(
+            #     dbc.Button("Close", id="close-button", className="ml-auto")
+            # )
         ], id="modal", is_open=False, backdrop=True, centered=True)  # by default, set the modal to be hidden
     ])
 ])

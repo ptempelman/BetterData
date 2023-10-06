@@ -138,7 +138,7 @@ body {
 
 
 .plus-sidebar {
-    background-color: black;
+    background-color: transparent;
     border: 0;
     width: 100%;
     height: 100%;
@@ -185,9 +185,14 @@ body {
 }
 
 .add-graph-area:active {
-    background-color: white !important;
+    background-color: #d1d1d1 !important;
 }
 
 .add-graph-area:active > .plus-graph {
     color: white;
+}
+
+.dropdown {
+    width: 60%;
+    margin: 5px;
 }
