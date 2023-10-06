@@ -1,4 +1,5 @@
-from dash import Dash, html, dcc, callback, Output, Input, dash_table
+from dash import Dash, html, dcc, callback, Output, Input, dash_table, dependencies, callback_context
+import dash_bootstrap_components as dbc
 
 import plotly.express as px
 import pandas as pd
@@ -15,7 +16,7 @@ ssl._create_default_https_context = ssl._create_unverified_context
 df = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/gapminder2007.csv')
 
 # Initialize the app
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+external_stylesheets = [dbc.themes.BOOTSTRAP]
 app = Dash(__name__, external_stylesheets=external_stylesheets)
 
 # App layout
@@ -26,32 +27,30 @@ app.layout = html.Div(style={'display': 'flex', 'flexDirection': 'column', 'heig
         # html.H1('Top Bar', style={'color': 'white', 'width': '200px'}),
 
         html.Div(style={'height': '100%', 'width': '300px', 'display': 'flex'}, children=[
-            html.Button(style={'margin-left': '30px'},
+            html.Button(style={'marginLeft': '30px'},
                 children=[
                     html.Img(src='/assets/sigma_logo.jpeg', id='overlay-image1', 
-                        style={'margin-top': '0px', 'margin-left': '0px', 'width': '30px', 'height': '30px', 'border-radius': '50%', 'border': '2px solid #ffffff'}),
+                        style={'marginTop': '0px', 'marginLeft': '0px', 'width': '30px', 'height': '30px', 'borderRadius': '50%', 'border': '2px solid #ffffff'}),
                 ],
                 className='square-button'
             ),
-            html.Button(
+            html.Div(
                 children=[
                     html.Img(src='/assets/john_face.png', id='overlay-image2', 
-                        style={'margin-top': '0px', 'margin-left': '0px', 'width': '30px', 'height': '30px', 'border-radius': '50%', 'border': '2px solid #00b7ff'})
+                        style={'marginTop': '0px', 'marginLeft': '0px', 'width': '30px', 'height': '30px', 'borderRadius': '50%', 'border': '2px solid #00b7ff'})
                 ],
                 className='square-button'
             ),
 
-            html.Button(
+            html.Div(
                 children=[
-                    html.Div(className='plus'),
-                    # html.Img(src='/assets/pixil-frame-0 (1).png', id='overlay-image2', 
-                    #     style={'margin-top': '0px', 'margin-left': '0px', 'width': '20px', 'height': '20px', 'fill': 'white'})
+                    dbc.Button('+', className='btn-lg, plus'),
                 ],
                 className='square-button'
             ),
         ]),
         # Log In button
-        html.Button('Sign In', className='login-button')
+        html.Button('SIGN IN', className='login-button')
 
     ]),
     
@@ -68,9 +67,10 @@ app.layout = html.Div(style={'display': 'flex', 'flexDirection': 'column', 'heig
             html.Div(children=[html.Div(className='sidebar-option', children=[
                 html.Div(filename, className='sidebar-text')
             ])
-                               for filename in os.listdir('data/') if filename.endswith('.csv')]),
+                for filename in os.listdir('data/') if filename.endswith('.csv')]),
+            
             html.Div(className='sidebar-add-button', children=[
-                html.Div(className='plus-sidebar')
+                dbc.Button('+', className='plus-sidebar')
             ])
 
         ]),
@@ -79,22 +79,31 @@ app.layout = html.Div(style={'display': 'flex', 'flexDirection': 'column', 'heig
         html.Div(style={'flex': '1', 'display': 'flex', 'flexWrap': 'wrap', 'justifyContent': 'space-between'}, children=[
             html.Div(style={'flex': '1'}, children=[
                 html.Div([
-                    html.Div([html.Div(className='plus-graph')], className='add-graph-button')
+                    dbc.Button([html.Div('+', className='plus-graph')], className='add-graph-area', id='open-button-1', n_clicks=0)
                 ], className='graph-square'),
                 html.Div([
-                    html.Div([html.Div(className='plus-graph')], className='add-graph-button')
+                    dbc.Button([html.Div('+', className='plus-graph')], className='add-graph-area', id='open-button-2', n_clicks=0)
                 ], className='graph-square'),
             ]),
             
             html.Div(style={'flex': '1'}, children=[
                 html.Div([
-                    html.Div([html.Div(className='plus-graph')], className='add-graph-button')
+                    dbc.Button([html.Div('+', className='plus-graph')], className='add-graph-area', id='open-button-3', n_clicks=0)
                 ], className='graph-square'),
                 html.Div([
-                    html.Div([html.Div(className='plus-graph')], className='add-graph-button')
+                    dbc.Button([html.Div('+', className='plus-graph')], className='add-graph-area', id='open-button-4', n_clicks=0)
                 ], className='graph-square'),
             ]),
-        ])
+        ]),
+
+        # The modal (popup)
+        dbc.Modal([
+            dbc.ModalHeader("Header"),
+            dbc.ModalBody("Your content here", className='modal-body'),
+            dbc.ModalFooter(
+                dbc.Button("Close", id="close-button", className="ml-auto")
+            )
+        ], id="modal", is_open=False, backdrop=True, centered=True)  # by default, set the modal to be hidden
     ])
 ])
 
@@ -143,6 +152,32 @@ app.layout = html.Div(style={'display': 'flex', 'flexDirection': 'column', 'heig
 # def update_graph(col_chosen):
 #     fig = px.histogram(df, x='continent', y=col_chosen, histfunc='avg')
 #     return fig
+
+@app.callback(
+    Output("modal", "is_open"),
+    [
+        Input("open-button-1", "n_clicks"),
+        Input("open-button-2", "n_clicks"),
+        Input("open-button-3", "n_clicks"),
+        Input("open-button-4", "n_clicks"),
+        Input("close-button", "n_clicks")
+    ],
+    [dependencies.State("modal", "is_open")]
+)
+def toggle_modal(n1, n2, n3, n4, n_close, is_open):
+    # Check which button was clicked by looking at dash.callback_context
+    ctx = callback_context
+    if not ctx.triggered:
+        return is_open
+
+    button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+    if button_id in ["open-button-1", "open-button-2", "open-button-3", "open-button-4"]:
+        return True
+    elif button_id == "close-button":
+        return False
+    else:
+        return is_open
+
 
 # Run the app
 if __name__ == '__main__':
