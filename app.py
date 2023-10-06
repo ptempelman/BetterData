@@ -4,6 +4,7 @@ import plotly.express as px
 import pandas as pd
 import data
 import os.path as osp
+import os
 
 import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
@@ -58,8 +59,20 @@ app.layout = html.Div(style={'display': 'flex', 'flexDirection': 'column', 'heig
     html.Div(style={'display': 'flex', 'flexDirection': 'row', 'flex': '1'}, children=[
         
         # Black left sidebar
-        html.Div(style={'backgroundColor': 'black', 'width': '20%', 'height': '90vh'}, children=[
-            html.H1('Sidebar', style={'color': 'white'})
+        html.Div(className='sidebar', children=[
+            html.Div(className='sidebar-title', children=[
+                html.Div('DATASETS', className='sidebar-title-inner')
+            ]),
+
+            # Sidebar dataset options
+            html.Div(children=[html.Div(className='sidebar-option', children=[
+                html.Div(filename, className='sidebar-text')
+            ])
+                               for filename in os.listdir('data/') if filename.endswith('.csv')]),
+            html.Div(className='sidebar-add-button', children=[
+                html.Div(className='plus-sidebar')
+            ])
+
         ]),
         
         # 2x4 grid
@@ -119,14 +132,14 @@ app.layout = html.Div(style={'display': 'flex', 'flexDirection': 'column', 'heig
 # ])
 
 # Add controls to build the interaction
-@callback(
-    Output(component_id='histo-chart-final', component_property='figure'),
-    Input(component_id='my-radio-buttons-final', component_property='value')
-)
-def update_graph(col_chosen):
-    fig = px.histogram(df, x='continent', y=col_chosen, histfunc='avg')
-    return fig
+# @callback(
+#     Output(component_id='histo-chart-final', component_property='figure'),
+#     Input(component_id='my-radio-buttons-final', component_property='value')
+# )
+# def update_graph(col_chosen):
+#     fig = px.histogram(df, x='continent', y=col_chosen, histfunc='avg')
+#     return fig
 
 # Run the app
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)
