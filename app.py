@@ -78,18 +78,22 @@ app.layout = html.Div(style={'display': 'flex', 'flexDirection': 'column', 'heig
         # 2x4 grid
         html.Div(style={'flex': '1', 'display': 'flex', 'flexWrap': 'wrap', 'justifyContent': 'space-between'}, children=[
             html.Div(style={'flex': '1'}, children=[
-                html.Div(['Cell 1-1'], style={'border': '1px solid', 'height': '20vh'}),
-                html.Div(['Cell 2-1'], style={'border': '1px solid', 'height': '20vh'}),
-                html.Div(['Cell 3-1'], style={'border': '1px solid', 'height': '20vh'}),
-                html.Div(['Cell 4-1'], style={'border': '1px solid', 'height': '20vh'}),
+                html.Div([
+                    html.Div([html.Div(className='plus-graph')], className='add-graph-button')
+                ], className='graph-square'),
+                html.Div([
+                    html.Div([html.Div(className='plus-graph')], className='add-graph-button')
+                ], className='graph-square'),
             ]),
             
             html.Div(style={'flex': '1'}, children=[
-                html.Div(['Cell 1-2'], style={'border': '1px solid', 'height': '20vh'}),
-                html.Div(['Cell 2-2'], style={'border': '1px solid', 'height': '20vh'}),
-                html.Div(['Cell 3-2'], style={'border': '1px solid', 'height': '20vh'}),
-                html.Div(['Cell 4-2'], style={'border': '1px solid', 'height': '20vh'}),
-            ])
+                html.Div([
+                    html.Div([html.Div(className='plus-graph')], className='add-graph-button')
+                ], className='graph-square'),
+                html.Div([
+                    html.Div([html.Div(className='plus-graph')], className='add-graph-button')
+                ], className='graph-square'),
+            ]),
         ])
     ])
 ])

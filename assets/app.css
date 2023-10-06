@@ -71,7 +71,7 @@ body {
 }
 
 .sidebar {
-    width: 20%;
+    width: 18%;
     height: 100%;
     background: linear-gradient(to bottom, #000000, #494949)
 }
@@ -148,4 +148,46 @@ body {
         conic-gradient(from 90deg at var(--b) var(--b),white 90deg,black 0) 
         calc(100% + var(--b)/2) calc(100% + var(--b)/2)/
         calc(50%  + var(--b))   calc(50%  + var(--b));
+}
+
+.graph-square {
+    border: 1px solid gray;
+    height: 30vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.add-graph-button {
+    height: 80px;
+    width: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.add-graph-button:hover {
+    cursor: pointer;
+    background-color: black;
+}
+
+.add-graph-button:hover > .plus-graph {
+    border: 28px solid black; /* the outer space */
+    background:
+        conic-gradient(from 90deg at var(--b) var(--b),black 90deg,white 0) 
+        calc(100% + var(--b)/2) calc(100% + var(--b)/2)/
+        calc(50%  + var(--b))   calc(50%  + var(--b));
+}
+
+.plus-graph {
+    --b: 3px; /* the thickness */
+    height: 28px;
+    width: 28px; /* the size */
+    aspect-ratio: 1;
+    border: 28px solid white; /* the outer space */
+    background:
+        conic-gradient(from 90deg at var(--b) var(--b),white 90deg,black 0) 
+        calc(100% + var(--b)/2) calc(100% + var(--b)/2)/
+        calc(50%  + var(--b))   calc(50%  + var(--b));
+    /* display: inline-block; */
 }
