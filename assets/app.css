@@ -25,14 +25,14 @@ body {
 }
 
 .login-button {
-    background-color: #000000;
-    color: #f5f5f5e4;
+    background-color: white;
+    color: black;
     width: 80px;
     height: 40px;
     border-radius: 0px;
     border: 0px;
     /* padding: 5px 15px; */
-    margin-right: 10px;
+    margin-right: 12px;
     cursor: pointer;
     outline: none;
     text-align: center;
@@ -41,7 +41,7 @@ body {
 }
 
 .login-button:hover {
-    background-color: #f5f5f5;
+    background-color: #cecece;
     color: black;
 }
 
@@ -90,11 +90,13 @@ body {
 }
 
 .sidebar-title-inner {
+    display: inline-grid;
+    align-items: center;      /* vertically center */
     height: 80%;
     width: 80%;
     color: black;
     background-color: white;
-    font-size: 25px;
+    font-size: 17px;
 }
 
 .sidebar-text {
@@ -195,4 +197,18 @@ body {
 .dropdown {
     width: 60%;
     margin: 5px;
+}
+
+.main-graph {
+    width: 100%;
+    height: 100%;
+}
+
+.modal-content {
+    border-radius: 0;
+}
+
+.graph-container {
+    width: 100%;
+    height: 100%;
 }
