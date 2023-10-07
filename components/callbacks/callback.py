@@ -118,6 +118,6 @@ def get_callbacks(app):
         inv = {'display': 'none'}
         vis = {'flex': '1', 'display': 'flex', 'flexWrap': 'wrap', 'justifyContent': 'space-between', 'position': 'relative'}
         if vm % 2 == 1:
-            return 'assets/bar_chart_FILL0_wght400_GRAD0_opsz24.svg', inv, vis
+            return 'assets/table_FILL0_wght400_GRAD0_opsz24.svg', inv, vis
         else:
-            return 'assets/table_FILL0_wght400_GRAD0_opsz24.svg', vis, inv
+            return 'assets/bar_chart_FILL0_wght400_GRAD0_opsz24.svg', vis, inv
