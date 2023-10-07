@@ -2,6 +2,7 @@ from dash import html, dcc
 import dash_bootstrap_components as dbc
 
 def render_graph_menu_modal(df):
+
     return dbc.Modal([
         dbc.ModalHeader("Header"),
         dbc.ModalBody(className='modal-body', children=[

@@ -1,8 +1,43 @@
-from dash import dcc, callback, Output, Input, State, callback_context
+from dash import dcc, callback, Output, Input, State, callback_context, dependencies
+import pandas as pd
 import plotly.express as px
+import data
+import os
+import os.path as osp
 
-def get_callbacks(app, df):
+def get_callbacks(app):
 
+    filenames = [filename[:-4] for filename in os.listdir(os.path.dirname(data.__file__)) if filename.endswith('.csv')]
+
+    @app.callback(
+        [Output(f"dynamic-sidebar-option-{filename}", 'className') for filename in filenames] \
+            + [Output('hidden-div-dataset', 'children'), 
+               Output('xaxis-column', 'options'),
+               Output('yaxis-column', 'options')],
+        [Input(f"dynamic-sidebar-option-{filename}", 'n_clicks') for filename in filenames],
+        prevent_initial_call=True
+    )
+    def update_button_color(*btn_clicks):
+        ctx = callback_context
+        clicked_btn_id = ctx.triggered[0]['prop_id'].split('.')[0]
+
+        default_style = 'sidebar-option'
+        active_style = 'sidebar-option-selected'
+        styles = [default_style for _ in range(len(filenames))]
+
+        if clicked_btn_id.rsplit('-', 1)[-1] in filenames:
+            clicked_btn_index = filenames.index(clicked_btn_id.rsplit('-', 1)[-1])
+            styles[clicked_btn_index] = active_style
+
+        filename = clicked_btn_id.replace('dynamic-sidebar-option-', '') + '.csv'
+        fileloc = osp.join(osp.dirname(data.__file__), filename)
+
+        df = pd.read_csv(fileloc)
+        options = [{'label': col, 'value': col} for col in df.columns]
+
+        return styles + [filename, options, options]
+
+    
     @callback(
         Output('hidden-div-xdropdown', 'children'),
         Input('xaxis-column', 'value')
@@ -47,12 +82,13 @@ def get_callbacks(app, df):
         State('graph-container-2', 'style'),
         State('graph-container-3', 'style'),
         State('graph-container-4', 'style'),
+        State('hidden-div-dataset', 'children')
         ],
         prevent_initial_call=True
         )
-    def add_graph(n, btn_id, xcol, ycol, vis1, vis2, vis3, vis4, gc1, gc2, gc3, gc4, gv1, gv2, gv3, gv4):
+    def add_graph(n, btn_id, xcol, ycol, vis1, vis2, vis3, vis4, gc1, gc2, gc3, gc4, gv1, gv2, gv3, gv4, ds):
 
-        graph = dcc.Graph(figure=px.histogram(df, x=xcol, y=ycol, histfunc='avg'), className='main-graph', \
+        graph = dcc.Graph(figure=px.histogram(pd.read_csv(osp.join(osp.dirname(data.__file__), ds)), x=xcol, y=ycol, histfunc='avg'), className='main-graph', \
                             config = {'displaylogo': False, 'modeBarButtonsToRemove': ['zoom', 'pan', 'select2d', 'lasso2d', 'autoscale']})
         
         inv = {'display': 'none'}

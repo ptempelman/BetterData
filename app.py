@@ -30,6 +30,7 @@ app.layout = html.Div(style={'display': 'flex', 'flexDirection': 'column', 'heig
         render_graph_grid(),
         
         html.Div(id='hidden-div', style={'display': 'none'}),
+        html.Div(id='hidden-div-dataset', style={'display': 'none'}),
         html.Div(id='hidden-div-xdropdown', style={'display': 'none'}),
         html.Div(id='hidden-div-ydropdown', style={'display': 'none'}),
 
@@ -38,7 +39,7 @@ app.layout = html.Div(style={'display': 'flex', 'flexDirection': 'column', 'heig
 ])
 
 
-get_callbacks(app, df)
+get_callbacks(app)
 
 if __name__ == '__main__':
     app.run(debug=True)
