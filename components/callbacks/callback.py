@@ -108,11 +108,16 @@ def get_callbacks(app):
             return True, ctx.triggered[0]['prop_id'].split('.')[0]
 
     @app.callback(
-        [Output('view-menu-img', 'src')],
-        [Input('view-menu', 'n_clicks')]
+        [Output('view-menu-img', 'src'), 
+         Output('graph-view-container', 'style'),
+         Output('table-view-container', 'style')],
+        [Input('view-menu', 'n_clicks')],
+        prevent_initial_call=True,
     )
     def toggle_view(vm):
-        if vm % 2 == 0:
-            return ['assets/bar_chart_FILL0_wght400_GRAD0_opsz24.svg']
+        inv = {'display': 'none'}
+        vis = {'flex': '1', 'display': 'flex', 'flexWrap': 'wrap', 'justifyContent': 'space-between', 'position': 'relative'}
+        if vm % 2 == 1:
+            return 'assets/bar_chart_FILL0_wght400_GRAD0_opsz24.svg', inv, vis
         else:
-            return ['assets/table_FILL0_wght400_GRAD0_opsz24.svg']
+            return 'assets/table_FILL0_wght400_GRAD0_opsz24.svg', vis, inv
