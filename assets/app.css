@@ -13,30 +13,40 @@ body {
     cursor: pointer;
     outline: none;
     border-radius: 0;
+    padding: 0;
 }
 
 .square-button:hover {
     background-color: white;  /* Color when button is highlighted */
 }
 
+.square-button:hover > .plus {
+    background-color: white;
+}
+
 .login-button {
-    background-color: #000000;
-    color: #f5f5f5e4;
+    background-color: white;
+    color: black;
     width: 80px;
     height: 40px;
     border-radius: 0px;
     border: 0px;
     /* padding: 5px 15px; */
-    margin-right: 10px;
+    margin-right: 12px;
     cursor: pointer;
     outline: none;
     text-align: center;
     padding: 0;
+    font-size: 13px;
 }
 
 .login-button:hover {
-    background-color: #f5f5f5;
+    background-color: #cecece;
     color: black;
+}
+
+.login-button:active {
+    color: white;
 }
 
 .top-bar {
@@ -50,28 +60,21 @@ body {
 }
 
 .plus {
-    --b: 3px; /* the thickness */
-    height: 24px;
-    width: 24px; /* the size */
-    aspect-ratio: 1;
-    border: 18px solid #000; /* the outer space */
-    background:
-        conic-gradient(from 90deg at var(--b) var(--b),black 90deg,#f5f5f5e4 0) 
-        calc(100% + var(--b)/2) calc(100% + var(--b)/2)/
-        calc(50%  + var(--b))   calc(50%  + var(--b));
-    /* display: inline-block; */
+    background-color: black;
+    border: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+    font-size: 20px;
 }
 
 .plus:hover {
-    border: 18px solid white; /* the outer space */
-    background:
-        conic-gradient(from 90deg at var(--b) var(--b),white 90deg,black 0) 
-        calc(100% + var(--b)/2) calc(100% + var(--b)/2)/
-        calc(50%  + var(--b))   calc(50%  + var(--b));
+    color: black;
+    background-color: white;
 }
 
 .sidebar {
-    width: 20%;
+    width: 18%;
     height: 100%;
     background: linear-gradient(to bottom, #000000, #494949)
 }
@@ -87,16 +90,19 @@ body {
 }
 
 .sidebar-title-inner {
+    display: inline-grid;
+    align-items: center;      /* vertically center */
     height: 80%;
     width: 80%;
     color: black;
     background-color: white;
-    font-size: 25px;
+    font-size: 17px;
 }
 
 .sidebar-text {
     font-size: 16px;
 }
+
 
 .sidebar-option {
     width: 100%;
@@ -111,6 +117,10 @@ body {
     color: black;
     background-color: white;
     cursor: pointer;
+}
+
+.sidebar-option:active > .sidebar-text {
+    color: white;
 }
 
 .sidebar-add-button {
@@ -130,22 +140,75 @@ body {
 
 
 .plus-sidebar {
-    --b: 2px; /* the thickness */
-    height: 16px;
-    width: 16px; /* the size */
-    aspect-ratio: 1;
-    border: 14px solid #000; /* the outer space */
-    background:
-        conic-gradient(from 90deg at var(--b) var(--b),black 90deg,#f5f5f5e4 0) 
-        calc(100% + var(--b)/2) calc(100% + var(--b)/2)/
-        calc(50%  + var(--b))   calc(50%  + var(--b));
-    /* display: inline-block; */
+    background-color: transparent;
+    border: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+    font-size: 20px;
 }
 
 .sidebar-add-button:hover > .plus-sidebar {
-    border: 14px solid white; /* the outer space */
-    background:
-        conic-gradient(from 90deg at var(--b) var(--b),white 90deg,black 0) 
-        calc(100% + var(--b)/2) calc(100% + var(--b)/2)/
-        calc(50%  + var(--b))   calc(50%  + var(--b));
+    background-color: white;
+    color: black;
+}
+
+.sidebar-add-button:active > .plus-sidebar{
+    color: white;
+}
+
+.graph-square {
+    border: 1px solid gray;
+    height: 40vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.add-graph-area {
+    height: 90%;
+    width: 90%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    border: 0;
+    border-radius: 0;
+}
+
+.plus-graph {
+    color: #5f5f5f;
+    font-size: 40px;
+}
+
+.add-graph-area:hover {
+    cursor: pointer;
+    background-color: #d1d1d1;
+}
+
+.add-graph-area:active {
+    background-color: #d1d1d1 !important;
+}
+
+.add-graph-area:active > .plus-graph {
+    color: white;
+}
+
+.dropdown {
+    width: 60%;
+    margin: 5px;
+}
+
+.main-graph {
+    width: 100%;
+    height: 100%;
+}
+
+.modal-content {
+    border-radius: 0;
+}
+
+.graph-container {
+    width: 100%;
+    height: 100%;
 }

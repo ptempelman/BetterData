@@ -1,5 +1,6 @@
-from dash import Dash, html, dcc, callback, Output, Input, dash_table
-
+from dash import Dash, html, dcc, callback, Output, Input, dash_table, dependencies, callback_context
+import dash_bootstrap_components as dbc
+from dash.dependencies import State
 import plotly.express as px
 import pandas as pd
 import data
@@ -15,8 +16,9 @@ ssl._create_default_https_context = ssl._create_unverified_context
 df = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/gapminder2007.csv')
 
 # Initialize the app
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+external_stylesheets = [dbc.themes.BOOTSTRAP]
 app = Dash(__name__, external_stylesheets=external_stylesheets)
+
 
 # App layout
 app.layout = html.Div(style={'display': 'flex', 'flexDirection': 'column', 'height': '100vh'}, children=[
@@ -26,32 +28,30 @@ app.layout = html.Div(style={'display': 'flex', 'flexDirection': 'column', 'heig
         # html.H1('Top Bar', style={'color': 'white', 'width': '200px'}),
 
         html.Div(style={'height': '100%', 'width': '300px', 'display': 'flex'}, children=[
-            html.Button(style={'margin-left': '30px'},
+            html.Button(style={'marginLeft': '30px'},
                 children=[
                     html.Img(src='/assets/sigma_logo.jpeg', id='overlay-image1', 
-                        style={'margin-top': '0px', 'margin-left': '0px', 'width': '30px', 'height': '30px', 'border-radius': '50%', 'border': '2px solid #ffffff'}),
+                        style={'marginTop': '0px', 'marginLeft': '0px', 'width': '30px', 'height': '30px', 'borderRadius': '50%', 'border': '2px solid #ffffff'}),
                 ],
                 className='square-button'
             ),
-            html.Button(
+            html.Div(
                 children=[
                     html.Img(src='/assets/john_face.png', id='overlay-image2', 
-                        style={'margin-top': '0px', 'margin-left': '0px', 'width': '30px', 'height': '30px', 'border-radius': '50%', 'border': '2px solid #00b7ff'})
+                        style={'marginTop': '0px', 'marginLeft': '0px', 'width': '30px', 'height': '30px', 'borderRadius': '50%', 'border': '2px solid #00b7ff'})
                 ],
                 className='square-button'
             ),
 
-            html.Button(
+            html.Div(
                 children=[
-                    html.Div(className='plus'),
-                    # html.Img(src='/assets/pixil-frame-0 (1).png', id='overlay-image2', 
-                    #     style={'margin-top': '0px', 'margin-left': '0px', 'width': '20px', 'height': '20px', 'fill': 'white'})
+                    dbc.Button('+', className='btn-lg, plus'),
                 ],
                 className='square-button'
             ),
         ]),
         # Log In button
-        html.Button('Sign In', className='login-button')
+        html.Button('SIGN IN', className='login-button')
 
     ]),
     
@@ -68,9 +68,10 @@ app.layout = html.Div(style={'display': 'flex', 'flexDirection': 'column', 'heig
             html.Div(children=[html.Div(className='sidebar-option', children=[
                 html.Div(filename, className='sidebar-text')
             ])
-                               for filename in os.listdir('data/') if filename.endswith('.csv')]),
+                for filename in os.listdir('data/') if filename.endswith('.csv')]),
+            
             html.Div(className='sidebar-add-button', children=[
-                html.Div(className='plus-sidebar')
+                dbc.Button('+', className='plus-sidebar')
             ])
 
         ]),
@@ -78,67 +79,158 @@ app.layout = html.Div(style={'display': 'flex', 'flexDirection': 'column', 'heig
         # 2x4 grid
         html.Div(style={'flex': '1', 'display': 'flex', 'flexWrap': 'wrap', 'justifyContent': 'space-between'}, children=[
             html.Div(style={'flex': '1'}, children=[
-                html.Div(['Cell 1-1'], style={'border': '1px solid', 'height': '20vh'}),
-                html.Div(['Cell 2-1'], style={'border': '1px solid', 'height': '20vh'}),
-                html.Div(['Cell 3-1'], style={'border': '1px solid', 'height': '20vh'}),
-                html.Div(['Cell 4-1'], style={'border': '1px solid', 'height': '20vh'}),
+                html.Div([
+                    dbc.Button([html.Div('+', className='plus-graph')], className='add-graph-area', id='open-button-1', n_clicks=0),
+                    html.Div(id='graph-container-1', className='graph-container', style={'display': 'none'})
+                ], id='graph-square-1', className='graph-square'),
+                
+                html.Div([
+                    dbc.Button([html.Div('+', className='plus-graph')], className='add-graph-area', id='open-button-2', n_clicks=0),
+                    html.Div(id='graph-container-2', className='graph-container', style={'display': 'none'})
+                ], id='graph-square-2', className='graph-square'),
             ]),
             
             html.Div(style={'flex': '1'}, children=[
-                html.Div(['Cell 1-2'], style={'border': '1px solid', 'height': '20vh'}),
-                html.Div(['Cell 2-2'], style={'border': '1px solid', 'height': '20vh'}),
-                html.Div(['Cell 3-2'], style={'border': '1px solid', 'height': '20vh'}),
-                html.Div(['Cell 4-2'], style={'border': '1px solid', 'height': '20vh'}),
-            ])
-        ])
+                html.Div([
+                    dbc.Button([html.Div('+', className='plus-graph')], className='add-graph-area', id='open-button-3', n_clicks=0),
+                    html.Div(id='graph-container-3', className='graph-container', style={'display': 'none'})
+                ], id='graph-square-3', className='graph-square'),
+                html.Div([
+                    dbc.Button([html.Div('+', className='plus-graph')], className='add-graph-area', id='open-button-4', n_clicks=0),
+                    html.Div(id='graph-container-4', className='graph-container', style={'display': 'none'})
+                ], id='graph-square-4', className='graph-square'),
+            ]),
+        ]),
+
+        # Hidden div to save origin of graph pop up press
+        html.Div(id='hidden-div', style={'display': 'none'}),
+
+        html.Div(id='hidden-div-xdropdown', style={'display': 'none'}),
+        html.Div(id='hidden-div-ydropdown', style={'display': 'none'}),
+
+        # The modal (popup)
+        dbc.Modal([
+            dbc.ModalHeader("Header"),
+            dbc.ModalBody(className='modal-body', children=[
+                html.Div([
+                    dcc.Dropdown(
+                        id='xaxis-column',
+                        options=[{'label': col, 'value': col} for col in df.columns],
+                        className='dropdown',
+                        value='A',
+                        searchable=True,
+                        placeholder='x-axis'
+                    ),
+                    dcc.Dropdown(
+                        id='yaxis-column',
+                        options=[{'label': col, 'value': col} for col in df.columns],
+                        className='dropdown',
+                        value='B',
+                        searchable=True,
+                        placeholder='y-axis'
+                    )
+                ]),
+            ]),
+
+            dbc.ModalFooter(
+                dbc.Button("Add", id="add-graph-button", className="ml-auto", n_clicks=0)
+            )
+            
+        ], id="modal", is_open=False, backdrop=True, centered=True)  # by default, set the modal to be hidden
     ])
 ])
 
-# html.Div(style={'height': '100vh', 'margin': '0', 'width': '100vw'}, children=[
+@callback(
+    Output('hidden-div-xdropdown', 'children'),
+    Input('xaxis-column', 'value')
+)
+def update_xaxis(col):
+    return col
 
-#     # New vertical column div on the left
-#     # html.Div(style={'backgroundColor': 'black', 'width': '100px', 'height': '100%'}),
 
-#     # The rest of your layout
-#     html.Div(children=[
-        
-#         html.Div(children=[
-#             html.Img(src='/assets/sigma_logo.jpeg', id='overlay-image1', 
-#                      style={'margin-top': '3px', 'margin-left': '10px', 'width': '30px', 'height': '30px', 'border-radius': '50%', 'border': '2px solid #ffffff'}),
-            
-#             html.Img(src='/assets/john_face.png', id='overlay-image2', 
-#                      style={'margin-top': '3px', 'margin-left': '10px', 'width': '30px', 'height': '30px', 'border-radius': '50%', 'border': '2px solid #00b7ff'})
-#         ],
-#         style={'textAlign': 'left', 'color': 'blue', 'fontSize': 30, 'background-color': 'black', 
-#                'padding': 0, 'width': '100%', 'height': '40px'}),
+@callback(
+    Output('hidden-div-ydropdown', 'children'),
+    Input('yaxis-column', 'value')
+)
+def update_xaxis(col):
+    return col
 
-#         html.Div(className='row', children=[
-#             dcc.RadioItems(options=['pop', 'lifeExp', 'gdpPercap'],
-#                            value='lifeExp',
-#                            inline=True,
-#                            id='my-radio-buttons-final')
-#         ]),
+@callback(
+    [Output(component_id='graph-container-1', component_property='children'),
+     Output(component_id='graph-container-2', component_property='children'),
+     Output(component_id='graph-container-3', component_property='children'),
+     Output(component_id='graph-container-4', component_property='children'),
+     Output('open-button-1', 'style'),
+     Output('open-button-2', 'style'),
+     Output('open-button-3', 'style'),
+     Output('open-button-4', 'style'),
+     Output(component_id='graph-container-1', component_property='style'),
+     Output(component_id='graph-container-2', component_property='style'),
+     Output(component_id='graph-container-3', component_property='style'),
+     Output(component_id='graph-container-4', component_property='style'),
+     Output("modal", "is_open", allow_duplicate=True)],
+    [Input(component_id='add-graph-button', component_property='n_clicks')],
+    [State('hidden-div', 'children'),
+     State('hidden-div-xdropdown', 'children'),
+     State('hidden-div-ydropdown', 'children'),
+     State('open-button-1', 'style'),
+     State('open-button-2', 'style'),
+     State('open-button-3', 'style'),
+     State('open-button-4', 'style'),
+     State('graph-container-1', 'children'),
+     State('graph-container-2', 'children'),
+     State('graph-container-3', 'children'),
+     State('graph-container-4', 'children'),
+     State('graph-container-1', 'style'),
+     State('graph-container-2', 'style'),
+     State('graph-container-3', 'style'),
+     State('graph-container-4', 'style'),
+     ],
+    prevent_initial_call=True
+    )
+def add_graph(n, btn_id, xcol, ycol, vis1, vis2, vis3, vis4, gc1, gc2, gc3, gc4, gv1, gv2, gv3, gv4):
 
-#         html.Div(className='row', children=[
-#             html.Div(className='six columns', children=[
-#                 dash_table.DataTable(data=df.to_dict('records'), page_size=11, style_table={'overflowX': 'auto'})
-#             ]),
-#             html.Div(className='six columns', children=[
-#                 dcc.Graph(figure={}, id='histo-chart-final')
-#             ])
-#         ])
+    graph = dcc.Graph(figure=px.histogram(df, x=xcol, y=ycol, histfunc='avg'), className='main-graph', \
+                         config = {'displaylogo': False, 'modeBarButtonsToRemove': ['zoom', 'pan', 'select2d', 'lasso2d', 'autoscale']})
+    
+    inv = {'display': 'none'}
+    vis = {'display': 'unset'}
+    if btn_id == 'open-button-1':
+        return [graph], gc2, gc3, gc4, \
+            inv, vis2, vis3, vis4, \
+            vis, gv2, gv3, gv4, False
+    if btn_id == 'open-button-2':
+        return gc1, [graph], gc3, gc4, \
+            vis1, inv, vis3, vis4, \
+            gv1, vis, gv3, gv4, False
+    if btn_id == 'open-button-3':
+        return gc1, gc2, [graph], gc4, \
+            vis1, vis2, inv, vis4, \
+            gv1, gv2, vis, gv4, False
+    else:
+        return gc1, gc2, gc3, [graph], \
+            vis1, vis2, vis3, inv, \
+            gv1, gv2, gv3, vis, False
 
-#     ])
-# ])
+@app.callback(
+    [Output("modal", "is_open", allow_duplicate=True),
+     Output('hidden-div', 'children')],
+    [
+        Input("open-button-1", "n_clicks"),
+        Input("open-button-2", "n_clicks"),
+        Input("open-button-3", "n_clicks"),
+        Input("open-button-4", "n_clicks"),
+    ],
+    [dependencies.State("modal", "is_open")],
+    prevent_initial_call=True,
+)
+def toggle_modal(b1, b2, b3, b4, is_open):
+    ctx = callback_context
+    if not ctx.triggered:
+        return False, 'nothing'
+    else:
+        return True, ctx.triggered[0]['prop_id'].split('.')[0]
 
-# Add controls to build the interaction
-# @callback(
-#     Output(component_id='histo-chart-final', component_property='figure'),
-#     Input(component_id='my-radio-buttons-final', component_property='value')
-# )
-# def update_graph(col_chosen):
-#     fig = px.histogram(df, x='continent', y=col_chosen, histfunc='avg')
-#     return fig
 
 # Run the app
 if __name__ == '__main__':
