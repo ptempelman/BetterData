@@ -239,3 +239,21 @@ body {
     background-color: white;
     color: black;
 }
+
+#view-menu {
+    position: absolute;
+    z-index: 1000;
+    width: 40px;
+    height: 40px;
+    background-color: black;
+    border-radius: 0 0 10px 0;
+    border: 0;
+}
+
+#view-menu:hover {
+    background-color: rgb(72, 72, 72);
+}
+
+#view-menu:active {
+    background-color: rgb(30, 30, 30);
+}

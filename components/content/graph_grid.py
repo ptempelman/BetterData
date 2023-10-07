@@ -2,7 +2,14 @@ from dash import html
 import dash_bootstrap_components as dbc
 
 def render_graph_grid():
-    return html.Div(style={'flex': '1', 'display': 'flex', 'flexWrap': 'wrap', 'justifyContent': 'space-between'}, children=[
+    return html.Div(style={'flex': '1', 'display': 'flex', 'flexWrap': 'wrap', 'justifyContent': 'space-between', 'position': 'relative'}, children=[
+            
+            
+            html.Button(id='view-menu', n_clicks=0, children=[
+                html.Img(id='view-menu-img', src='assets/bar_chart_FILL0_wght400_GRAD0_opsz24.svg')
+            ]),
+
+
             html.Div(style={'flex': '1'}, children=[
                 html.Div([
                     dbc.Button([html.Div('+', className='plus-graph')], className='add-graph-area', id='open-button-1', n_clicks=0),

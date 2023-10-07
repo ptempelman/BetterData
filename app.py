@@ -27,6 +27,7 @@ app.layout = html.Div(style={'display': 'flex', 'flexDirection': 'column', 'heig
     html.Div(style={'display': 'flex', 'flexDirection': 'row', 'flex': '1'}, children=[
         
         render_sidebar(),
+        
         render_graph_grid(),
         
         html.Div(id='hidden-div', style={'display': 'none'}),
