@@ -39,6 +39,27 @@ def render_graph_grid():
                                         style={"display": "none"},
                                         children=[
                                             html.Div(
+                                                id=f"graph-menu-options-{i}",
+                                                className="graph-menu-options",
+                                                children=[
+                                                    html.Button(
+                                                        id=f"graph-menu-edit-{i}",
+                                                        className="graph-menu-button",
+                                                        children=html.Img(
+                                                            className="graph-menu-button-img",
+                                                            src="assets/edit_FILL0_wght400_GRAD0_opsz24.svg",
+                                                        ),
+                                                    ),
+                                                    html.Button(
+                                                        id=f"graph-menu-delete-{i}",
+                                                        className="graph-menu-button",
+                                                        children=html.Img(
+                                                            src="assets/delete_FILL0_wght400_GRAD0_opsz24.svg"
+                                                        ),
+                                                    ),
+                                                ],
+                                            ),
+                                            html.Div(
                                                 id=f"graph-container-{i}",
                                                 className="graph-container",
                                             ),
@@ -49,7 +70,8 @@ def render_graph_grid():
                                 className="graph-square",
                             )
                         ],
-                    ) for i in range(1, 5)
+                    )
+                    for i in range(1, 5)
                 ],
             ),
         ],

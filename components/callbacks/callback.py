@@ -76,9 +76,9 @@ def get_callbacks(app):
         return col
 
     @callback(
-        [Output(f"graph-container-{i + 1}", "children") for i in range(4)]
-        + [Output(f"open-button-{i + 1}", "style") for i in range(4)]
-        + [Output(f"filled-container-{i + 1}", "style") for i in range(4)]
+        [Output(f"graph-container-{i + 1}", "children", allow_duplicate=True) for i in range(4)]
+        + [Output(f"open-button-{i + 1}", "style", allow_duplicate=True) for i in range(4)]
+        + [Output(f"filled-container-{i + 1}", "style", allow_duplicate=True) for i in range(4)]
         + [Output("modal", "is_open", allow_duplicate=True)],
         [Input("add-graph-button", "n_clicks")],
         [
@@ -184,3 +184,30 @@ def get_callbacks(app):
             return "assets/table_FILL0_wght400_GRAD0_opsz24.svg", inv, vis
         else:
             return "assets/bar_chart_FILL0_wght400_GRAD0_opsz24.svg", vis, inv
+
+    @callback(
+        [Output(f"open-button-{i + 1}", "style", allow_duplicate=True) for i in range(4)]
+        + [Output(f"filled-container-{i + 1}", "style", allow_duplicate=True) for i in range(4)],
+        [Input(f"graph-menu-delete-{i + 1}", "n_clicks") for i in range(4)],
+        [State(f"open-button-{i + 1}", "style") for i in range(4)]
+        + [State(f"filled-container-{i + 1}", "style") for i in range(4)],
+        prevent_initial_call=True,
+    )
+    def delete_graph(
+        g1, g2, g3, g4, vis1, vis2, vis3, vis4, gv1, gv2, gv3, gv4
+    ):
+
+        inv = {"display": "none"}
+        vis = {"display": "unset"}
+
+        ctx = callback_context
+        clicked_btn_id = ctx.triggered[0]["prop_id"].split(".")[0]
+        idx = int(clicked_btn_id[-1]) - 1
+        
+        button_vis = [vis1, vis2, vis3, vis4]
+        graph_vis = [gv1, gv2, gv3, gv4]
+
+        button_vis[idx] = vis
+        graph_vis[idx] = inv
+
+        return button_vis + graph_vis
