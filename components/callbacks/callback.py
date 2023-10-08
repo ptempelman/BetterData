@@ -4,6 +4,7 @@ import plotly.express as px
 import data
 import os
 import os.path as osp
+from dash import dash_table
 
 def get_callbacks(app):
 
@@ -13,7 +14,8 @@ def get_callbacks(app):
         [Output(f"dynamic-sidebar-option-{filename}", 'className') for filename in filenames] \
             + [Output('hidden-div-dataset', 'children'), 
                Output('xaxis-column', 'options'),
-               Output('yaxis-column', 'options')],
+               Output('yaxis-column', 'options'),
+               Output('table-view-container', 'children')],
         [Input(f"dynamic-sidebar-option-{filename}", 'n_clicks') for filename in filenames],
         prevent_initial_call=True
     )
@@ -35,7 +37,15 @@ def get_callbacks(app):
         df = pd.read_csv(fileloc)
         options = [{'label': col, 'value': col} for col in df.columns]
 
-        return styles + [filename, options, options]
+        table_view = dash_table.DataTable(
+                id='table',
+                columns=[{"name": i, "id": i} for i in df.columns],
+                data=df.to_dict('records'),
+                style_header={'color': 'white', 'background-color': '#7d7d7d','border': '1px solid black' },
+                style_cell={ 'border': '1px solid grey' },
+            )
+
+        return styles + [filename, options, options, [table_view]]
 
     
     @callback(
@@ -106,4 +116,18 @@ def get_callbacks(app):
             return False, 'nothing'
         else:
             return True, ctx.triggered[0]['prop_id'].split('.')[0]
-        
+
+    @app.callback(
+        [Output('view-menu-img', 'src'), 
+         Output('graph-view-container', 'style'),
+         Output('table-view-container', 'style')],
+        [Input('view-menu', 'n_clicks')],
+        prevent_initial_call=True,
+    )
+    def toggle_view(vm):
+        inv = {'display': 'none'}
+        vis = {'flex': '1', 'display': 'flex', 'flexWrap': 'wrap', 'justifyContent': 'space-between', 'position': 'relative'}
+        if vm % 2 == 1:
+            return 'assets/table_FILL0_wght400_GRAD0_opsz24.svg', inv, vis
+        else:
+            return 'assets/bar_chart_FILL0_wght400_GRAD0_opsz24.svg', vis, inv

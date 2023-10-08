@@ -74,7 +74,7 @@ body {
 }
 
 .sidebar {
-    width: 18%;
+    width: 16%;
     height: 100%;
     background: linear-gradient(to bottom, #000000, #494949)
 }
@@ -226,10 +226,6 @@ body {
     height: 100%;
 }
 
-/* #radio-input input[type="radio"] {
-    display: none;
-} */
-
 #radio-input {
     text-align: center;
     color: white;
@@ -238,4 +234,37 @@ body {
     cursor: pointer;
     background-color: white;
     color: black;
+}
+
+#view-menu {
+    position: absolute;
+    z-index: 1000;
+    width: 40px;
+    height: 40px;
+    background-color: black;
+    border-radius: 0 0 10px 0;
+    border: 1px black;
+}
+
+#view-menu:hover {
+    background-color: rgb(72, 72, 72);
+}
+
+#view-menu:active {
+    background-color: rgb(30, 30, 30);
+}
+
+#table-view-container {
+    width: 100%;
+    height: 100%;
+}
+
+#graph-view-container {
+    width: 100%;
+    height: 100%;
+}
+
+#content-container {
+    width: 100%;
+    height: 100%;
 }
