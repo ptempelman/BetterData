@@ -179,13 +179,7 @@ def get_callbacks(app):
     )
     def toggle_view(vm):
         inv = {"display": "none"}
-        vis = {
-            "flex": "1",
-            "display": "flex",
-            "flexWrap": "wrap",
-            "justifyContent": "space-between",
-            "position": "relative",
-        }
+        vis = {"display": "grid"}
         if vm % 2 == 1:
             return "assets/table_FILL0_wght400_GRAD0_opsz24.svg", inv, vis
         else:
