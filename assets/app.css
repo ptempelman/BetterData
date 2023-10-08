@@ -74,7 +74,7 @@ body {
 }
 
 .sidebar {
-    width: 18%;
+    width: 16%;
     height: 100%;
     background: linear-gradient(to bottom, #000000, #494949)
 }
@@ -226,10 +226,6 @@ body {
     height: 100%;
 }
 
-/* #radio-input input[type="radio"] {
-    display: none;
-} */
-
 #radio-input {
     text-align: center;
     color: white;
@@ -247,7 +243,7 @@ body {
     height: 40px;
     background-color: black;
     border-radius: 0 0 10px 0;
-    border: 0;
+    border: 1px black;
 }
 
 #view-menu:hover {
