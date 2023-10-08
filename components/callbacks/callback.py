@@ -78,7 +78,7 @@ def get_callbacks(app):
     @callback(
         [Output(f"graph-container-{i + 1}", "children") for i in range(4)]
         + [Output(f"open-button-{i + 1}", "style") for i in range(4)]
-        + [Output(f"graph-container-{i + 1}", "style") for i in range(4)]
+        + [Output(f"filled-container-{i + 1}", "style") for i in range(4)]
         + [Output("modal", "is_open", allow_duplicate=True)],
         [Input("add-graph-button", "n_clicks")],
         [
@@ -88,7 +88,7 @@ def get_callbacks(app):
         ]
         + [State(f"open-button-{i + 1}", "style") for i in range(4)]
         + [State(f"graph-container-{i + 1}", "children") for i in range(4)]
-        + [State(f"graph-container-{i + 1}", "style") for i in range(4)]
+        + [State(f"filled-container-{i + 1}", "style") for i in range(4)]
         + [State("hidden-div-dataset", "children")],
         prevent_initial_call=True,
     )

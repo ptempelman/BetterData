@@ -30,86 +30,26 @@ def render_graph_grid():
                                     dbc.Button(
                                         [html.Div("+", className="plus-graph")],
                                         className="add-graph-area",
-                                        id="open-button-1",
+                                        id=f"open-button-{i}",
                                         n_clicks=0,
                                     ),
                                     html.Div(
-                                        id="graph-container-1",
-                                        className="graph-container",
+                                        id=f"filled-container-{i}",
+                                        className="filled-container",
                                         style={"display": "none"},
+                                        children=[
+                                            html.Div(
+                                                id=f"graph-container-{i}",
+                                                className="graph-container",
+                                            ),
+                                        ],
                                     ),
                                 ],
-                                id="graph-square-1",
+                                id=f"graph-square-{i}",
                                 className="graph-square",
                             )
                         ],
-                    ),
-                    html.Div(
-                        className="grid-item",
-                        children=[
-                            html.Div(
-                                [
-                                    dbc.Button(
-                                        [html.Div("+", className="plus-graph")],
-                                        className="add-graph-area",
-                                        id="open-button-2",
-                                        n_clicks=0,
-                                    ),
-                                    html.Div(
-                                        id="graph-container-2",
-                                        className="graph-container",
-                                        style={"display": "none"},
-                                    ),
-                                ],
-                                id="graph-square-2",
-                                className="graph-square",
-                            )
-                        ],
-                    ),
-                    html.Div(
-                        className="grid-item",
-                        children=[
-                            html.Div(
-                                [
-                                    dbc.Button(
-                                        [html.Div("+", className="plus-graph")],
-                                        className="add-graph-area",
-                                        id="open-button-3",
-                                        n_clicks=0,
-                                    ),
-                                    html.Div(
-                                        id="graph-container-3",
-                                        className="graph-container",
-                                        style={"display": "none"},
-                                    ),
-                                ],
-                                id="graph-square-3",
-                                className="graph-square",
-                            )
-                        ],
-                    ),
-                    html.Div(
-                        className="grid-item",
-                        children=[
-                            html.Div(
-                                [
-                                    dbc.Button(
-                                        [html.Div("+", className="plus-graph")],
-                                        className="add-graph-area",
-                                        id="open-button-4",
-                                        n_clicks=0,
-                                    ),
-                                    html.Div(
-                                        id="graph-container-4",
-                                        className="graph-container",
-                                        style={"display": "none"},
-                                    ),
-                                ],
-                                id="graph-square-4",
-                                className="graph-square",
-                            )
-                        ],
-                    ),
+                    ) for i in range(1, 5)
                 ],
             ),
         ],
