@@ -8,7 +8,7 @@ def render_graph_grid():
                 ]),
 
                 html.Div(id='table-view-container', style={'display': 'none'}, children=[
-                    
+
                 ]),
 
                 html.Div(id='graph-view-container', style={'flex': '1', 'display': 'flex', 'flexWrap': 'wrap', 'justifyContent': 'space-between', 'position': 'relative'}, children=[
