@@ -3,9 +3,11 @@ body {
 }
 
 .square-button {
-    width: 60px;  /* You can adjust this as per your requirement */
+    width: 60px;
+    /* You can adjust this as per your requirement */
     height: 100%;
-    background-color: black;  /* Default button color */
+    background-color: black;
+    /* Default button color */
     border: none;
     display: flex;
     align-items: center;
@@ -17,10 +19,11 @@ body {
 }
 
 .square-button:hover {
-    background-color: white;  /* Color when button is highlighted */
+    background-color: white;
+    /* Color when button is highlighted */
 }
 
-.square-button:hover > .plus {
+.square-button:hover>.plus {
     background-color: white;
 }
 
@@ -54,7 +57,8 @@ body {
     height: 60px;
     width: 100%;
     display: flex;
-    justify-content: space-between;  /* This will push child items to the edges */
+    justify-content: space-between;
+    /* This will push child items to the edges */
     align-items: center;
     /* padding: 0 20px; */
 }
@@ -84,14 +88,16 @@ body {
     width: 100%;
     color: #f5f5f5e4;
     display: flex;
-    justify-content: center; /* centers horizontally */
+    justify-content: center;
+    /* centers horizontally */
     text-align: center;
     align-items: center;
 }
 
 .sidebar-title-inner {
     display: inline-grid;
-    align-items: center;      /* vertically center */
+    align-items: center;
+    /* vertically center */
     height: 80%;
     width: 80%;
     color: black;
@@ -132,7 +138,7 @@ body {
     cursor: pointer;
 }
 
-.sidebar-option:active > .sidebar-text {
+.sidebar-option:active>.sidebar-text {
     color: white;
 }
 
@@ -161,12 +167,12 @@ body {
     font-size: 20px;
 }
 
-.sidebar-add-button:hover > .plus-sidebar {
+.sidebar-add-button:hover>.plus-sidebar {
     background-color: white;
     color: black;
 }
 
-.sidebar-add-button:active > .plus-sidebar{
+.sidebar-add-button:active>.plus-sidebar {
     color: white;
 }
 
@@ -205,7 +211,7 @@ body {
     background-color: #d1d1d1 !important;
 }
 
-.add-graph-area:active > .plus-graph {
+.add-graph-area:active>.plus-graph {
     color: white;
 }
 
@@ -232,6 +238,7 @@ body {
     text-align: center;
     color: white;
 }
+
 #radio-input label:hover {
     cursor: pointer;
     background-color: white;
@@ -276,8 +283,10 @@ body {
     grid-template-columns: 50% 50%;
     grid-template-rows: 50% 50%;
     width: 100%;
-    height: 80vh; /* or any other fixed size */
-    gap: 0px; /* spacing between the grid items */
+    height: 80vh;
+    /* or any other fixed size */
+    gap: 0px;
+    /* spacing between the grid items */
 }
 
 .grid-item {
