@@ -12,6 +12,16 @@ def render_graph_menu_modal(df):
                     html.Div(
                         [
                             dcc.Dropdown(
+                                id="graph-type-dropdown",
+                                options=[
+                                    {"label": "histogram", "value": "histogram"}, {"label": "scatterplot", "value": "scatterplot"}
+                                ],
+                                className="dropdown",
+                                value="",
+                                searchable=True,
+                                placeholder="graph type",
+                            ),
+                            dcc.Dropdown(
                                 id="xaxis-column",
                                 options=[
                                     {"label": col, "value": col} for col in df.columns

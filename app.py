@@ -40,6 +40,7 @@ app.layout = html.Div(
                 html.Div(id="hidden-div-dataset", style={"display": "none"}),
                 html.Div(id="hidden-div-xdropdown", style={"display": "none"}),
                 html.Div(id="hidden-div-ydropdown", style={"display": "none"}),
+                html.Div(id="hidden-div-graph-type", style={"display": "none"}),
                 render_graph_menu_modal(df),
             ],
         ),
