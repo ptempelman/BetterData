@@ -159,7 +159,7 @@ def get_callbacks(app):
     @app.callback(
         [
             Output("modal", "is_open", allow_duplicate=True),
-            Output("hidden-div", "children"),
+            Output("hidden-div", "children", allow_duplicate=True),
         ],
         [
             Input("open-button-1", "n_clicks"),
@@ -226,25 +226,20 @@ def get_callbacks(app):
 
     @callback(
         [
-            Output("open-button-1", "n_clicks"),
-            Output("open-button-2", "n_clicks"),
-            Output("open-button-3", "n_clicks"),
-            Output("open-button-4", "n_clicks"),
+            Output("modal", "is_open", allow_duplicate=True),
+            Output("hidden-div", "children", allow_duplicate=True),
         ],
         [Input(f"graph-menu-edit-{i + 1}", "n_clicks") for i in range(4)],
         [
-            State("open-button-1", "n_clicks"),
-            State("open-button-2", "n_clicks"),
-            State("open-button-3", "n_clicks"),
-            State("open-button-4", "n_clicks"),
         ],
         prevent_initial_call=True,
         )
-    def edit_graph(i1, i2, i3, i4, ic1, ic2, ic3, ic4):
+    def edit_graph(ic1, ic2, ic3, ic4):
         ctx = callback_context
         clicked_btn_id = ctx.triggered[0]["prop_id"].split(".")[0]
         idx = int(clicked_btn_id[-1]) - 1
         
+        
         clicks = [ic1, ic2, ic3, ic4]
         clicks[idx] += 1
-        return clicks
+        return True, "open-button-" + str(idx + 1)
