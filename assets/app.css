@@ -285,13 +285,13 @@ body {
 }
 
 .grid-container {
-    display: grid;
+    /* display: grid;
     grid-template-columns: 50% 50%;
-    grid-template-rows: 50% 50%;
+    grid-template-rows: 50% 50%; */
     width: 100%;
     height: 90vh;
     /* or any other fixed size */
-    gap: 0px;
+    /* gap: 0px; */
     /* spacing between the grid items */
 }
 
