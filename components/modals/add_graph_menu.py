@@ -1,5 +1,7 @@
 from dash import html, dcc
 import dash_bootstrap_components as dbc
+import os
+import data
 
 
 def render_graph_menu_modal(df):
@@ -11,6 +13,33 @@ def render_graph_menu_modal(df):
                 children=[
                     html.Div(
                         [
+                            html.Div(id='metadata-graph', children=[
+                                dcc.Dropdown(
+                                    id="dataset-dropdown",
+                                    options=[
+                                        {"label": filename, "value": filename}
+                                        for filename in os.listdir(
+                                            os.path.dirname(data.__file__)
+                                        )
+                                        if filename.endswith(".csv")
+                                    ],
+                                    className="dropdown",
+                                    value="",
+                                    searchable=True,
+                                    placeholder="dataset",
+                                ),
+                                dcc.Dropdown(
+                                    id="graph-type-dropdown",
+                                    options=[
+                                        {"label": "histogram", "value": "histogram"},
+                                        {"label": "scatterplot", "value": "scatterplot"},
+                                    ],
+                                    className="dropdown",
+                                    value="",
+                                    searchable=True,
+                                    placeholder="graph type",
+                                ),
+                            ]),
                             dcc.Dropdown(
                                 id="xaxis-column",
                                 options=[

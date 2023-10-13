@@ -16,52 +16,68 @@ def get_callbacks(app):
 
     @app.callback(
         [
-            Output(f"dynamic-sidebar-option-{filename}", "className")
-            for filename in filenames
-        ]
-        + [
             Output("hidden-div-dataset", "children"),
             Output("xaxis-column", "options"),
             Output("yaxis-column", "options"),
-            Output("table-view-container", "children"),
         ],
-        [
-            Input(f"dynamic-sidebar-option-{filename}", "n_clicks")
-            for filename in filenames
-        ],
+        Input("dataset-dropdown", "value"),
         prevent_initial_call=True,
     )
-    def update_button_color(*btn_clicks):
-        ctx = callback_context
-        clicked_btn_id = ctx.triggered[0]["prop_id"].split(".")[0]
-
-        default_style = "sidebar-option"
-        active_style = "sidebar-option-selected"
-        styles = [default_style for _ in range(len(filenames))]
-
-        if clicked_btn_id.rsplit("-", 1)[-1] in filenames:
-            clicked_btn_index = filenames.index(clicked_btn_id.rsplit("-", 1)[-1])
-            styles[clicked_btn_index] = active_style
-
-        filename = clicked_btn_id.replace("dynamic-sidebar-option-", "") + ".csv"
+    def update_dataset(filename):
         fileloc = osp.join(osp.dirname(data.__file__), filename)
 
         df = pd.read_csv(fileloc)
         options = [{"label": col, "value": col} for col in df.columns]
+        return filename, options, options
 
-        table_view = dash_table.DataTable(
-            id="table",
-            columns=[{"name": i, "id": i} for i in df.columns],
-            data=df.to_dict("records"),
-            style_header={
-                "color": "white",
-                "background-color": "#7d7d7d",
-                "border": "1px solid black",
-            },
-            style_cell={"border": "1px solid grey"},
-        )
+    # @app.callback(
+    #     [
+    #         Output(f"dynamic-sidebar-option-{filename}", "className")
+    #         for filename in filenames
+    #     ]
+    #     + [
+    #         Output("hidden-div-dataset", "children"),
+    #         Output("xaxis-column", "options"),
+    #         Output("yaxis-column", "options"),
+    #         Output("table-view-container", "children"),
+    #     ],
+    #     [
+    #         Input(f"dynamic-sidebar-option-{filename}", "n_clicks")
+    #         for filename in filenames
+    #     ],
+    #     prevent_initial_call=True,
+    # )
+    # def update_button_color(*btn_clicks):
+    #     ctx = callback_context
+    #     clicked_btn_id = ctx.triggered[0]["prop_id"].split(".")[0]
 
-        return styles + [filename, options, options, [table_view]]
+    #     default_style = "sidebar-option"
+    #     active_style = "sidebar-option-selected"
+    #     styles = [default_style for _ in range(len(filenames))]
+
+    #     if clicked_btn_id.rsplit("-", 1)[-1] in filenames:
+    #         clicked_btn_index = filenames.index(clicked_btn_id.rsplit("-", 1)[-1])
+    #         styles[clicked_btn_index] = active_style
+
+    #     filename = clicked_btn_id.replace("dynamic-sidebar-option-", "") + ".csv"
+    #     fileloc = osp.join(osp.dirname(data.__file__), filename)
+
+    #     df = pd.read_csv(fileloc)
+    #     options = [{"label": col, "value": col} for col in df.columns]
+
+    #     table_view = dash_table.DataTable(
+    #         id="table",
+    #         columns=[{"name": i, "id": i} for i in df.columns],
+    #         data=df.to_dict("records"),
+    #         style_header={
+    #             "color": "white",
+    #             "background-color": "#7d7d7d",
+    #             "border": "1px solid black",
+    #         },
+    #         style_cell={"border": "1px solid grey"},
+    #     )
+
+    #     return styles + [filename, options, options, [table_view]]
 
     @callback(
         Output("hidden-div-xdropdown", "children"), Input("xaxis-column", "value")
@@ -72,8 +88,15 @@ def get_callbacks(app):
     @callback(
         Output("hidden-div-ydropdown", "children"), Input("yaxis-column", "value")
     )
-    def update_xaxis(col):
+    def update_yaxis(col):
         return col
+
+    @callback(
+        Output("hidden-div-graph-type", "children"),
+        Input("graph-type-dropdown", "value"),
+    )
+    def update_graph_type(graph_type):
+        return graph_type
 
     @callback(
         [
@@ -94,6 +117,7 @@ def get_callbacks(app):
             State("hidden-div", "children"),
             State("hidden-div-xdropdown", "children"),
             State("hidden-div-ydropdown", "children"),
+            State("hidden-div-graph-type", "children"),
         ]
         + [State(f"open-button-{i + 1}", "style") for i in range(4)]
         + [State(f"graph-container-{i + 1}", "children") for i in range(4)]
@@ -106,6 +130,7 @@ def get_callbacks(app):
         btn_id,
         xcol,
         ycol,
+        graph_type,
         vis1,
         vis2,
         vis3,
@@ -120,26 +145,47 @@ def get_callbacks(app):
         gv4,
         ds,
     ):
-        graph = dcc.Graph(
-            figure=px.histogram(
-                pd.read_csv(osp.join(osp.dirname(data.__file__), ds)),
-                x=xcol,
-                y=ycol,
-                histfunc="avg",
-                template="plotly_dark",
-            ),
-            className="main-graph",
-            config={
-                "displaylogo": False,
-                "modeBarButtonsToRemove": [
-                    "zoom",
-                    "pan",
-                    "select2d",
-                    "lasso2d",
-                    "autoscale",
-                ],
-            },
-        )
+        if graph_type == "histogram":
+            graph = dcc.Graph(
+                figure=px.histogram(
+                    pd.read_csv(osp.join(osp.dirname(data.__file__), ds)),
+                    x=xcol,
+                    y=ycol,
+                    histfunc="avg",
+                    template="plotly_dark",
+                ),
+                className="main-graph",
+                config={
+                    "displaylogo": False,
+                    "modeBarButtonsToRemove": [
+                        "zoom",
+                        "pan",
+                        "select2d",
+                        "lasso2d",
+                        "autoscale",
+                    ],
+                },
+            )
+        elif graph_type == "scatterplot":
+            graph = dcc.Graph(
+                figure=px.scatter(
+                    pd.read_csv(osp.join(osp.dirname(data.__file__), ds)),
+                    x=xcol,
+                    y=ycol,
+                    template="plotly_dark",
+                ),
+                className="main-graph",
+                config={
+                    "displaylogo": False,
+                    "modeBarButtonsToRemove": [
+                        "zoom",
+                        "pan",
+                        "select2d",
+                        "lasso2d",
+                        "autoscale",
+                    ],
+                },
+            )
 
         inv = {"display": "none"}
         vis = {"display": "unset"}
@@ -230,16 +276,14 @@ def get_callbacks(app):
             Output("hidden-div", "children", allow_duplicate=True),
         ],
         [Input(f"graph-menu-edit-{i + 1}", "n_clicks") for i in range(4)],
-        [
-        ],
+        [],
         prevent_initial_call=True,
-        )
+    )
     def edit_graph(ic1, ic2, ic3, ic4):
         ctx = callback_context
         clicked_btn_id = ctx.triggered[0]["prop_id"].split(".")[0]
         idx = int(clicked_btn_id[-1]) - 1
-        
-        
+
         clicks = [ic1, ic2, ic3, ic4]
         clicks[idx] += 1
         return True, "open-button-" + str(idx + 1)
