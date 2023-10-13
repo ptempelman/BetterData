@@ -16,52 +16,68 @@ def get_callbacks(app):
 
     @app.callback(
         [
-            Output(f"dynamic-sidebar-option-{filename}", "className")
-            for filename in filenames
-        ]
-        + [
             Output("hidden-div-dataset", "children"),
             Output("xaxis-column", "options"),
             Output("yaxis-column", "options"),
-            Output("table-view-container", "children"),
         ],
-        [
-            Input(f"dynamic-sidebar-option-{filename}", "n_clicks")
-            for filename in filenames
-        ],
+        Input("dataset-dropdown", "value"),
         prevent_initial_call=True,
     )
-    def update_button_color(*btn_clicks):
-        ctx = callback_context
-        clicked_btn_id = ctx.triggered[0]["prop_id"].split(".")[0]
-
-        default_style = "sidebar-option"
-        active_style = "sidebar-option-selected"
-        styles = [default_style for _ in range(len(filenames))]
-
-        if clicked_btn_id.rsplit("-", 1)[-1] in filenames:
-            clicked_btn_index = filenames.index(clicked_btn_id.rsplit("-", 1)[-1])
-            styles[clicked_btn_index] = active_style
-
-        filename = clicked_btn_id.replace("dynamic-sidebar-option-", "") + ".csv"
+    def update_dataset(filename):
         fileloc = osp.join(osp.dirname(data.__file__), filename)
 
         df = pd.read_csv(fileloc)
         options = [{"label": col, "value": col} for col in df.columns]
+        return filename, options, options
 
-        table_view = dash_table.DataTable(
-            id="table",
-            columns=[{"name": i, "id": i} for i in df.columns],
-            data=df.to_dict("records"),
-            style_header={
-                "color": "white",
-                "background-color": "#7d7d7d",
-                "border": "1px solid black",
-            },
-            style_cell={"border": "1px solid grey"},
-        )
+    # @app.callback(
+    #     [
+    #         Output(f"dynamic-sidebar-option-{filename}", "className")
+    #         for filename in filenames
+    #     ]
+    #     + [
+    #         Output("hidden-div-dataset", "children"),
+    #         Output("xaxis-column", "options"),
+    #         Output("yaxis-column", "options"),
+    #         Output("table-view-container", "children"),
+    #     ],
+    #     [
+    #         Input(f"dynamic-sidebar-option-{filename}", "n_clicks")
+    #         for filename in filenames
+    #     ],
+    #     prevent_initial_call=True,
+    # )
+    # def update_button_color(*btn_clicks):
+    #     ctx = callback_context
+    #     clicked_btn_id = ctx.triggered[0]["prop_id"].split(".")[0]
 
-        return styles + [filename, options, options, [table_view]]
+    #     default_style = "sidebar-option"
+    #     active_style = "sidebar-option-selected"
+    #     styles = [default_style for _ in range(len(filenames))]
+
+    #     if clicked_btn_id.rsplit("-", 1)[-1] in filenames:
+    #         clicked_btn_index = filenames.index(clicked_btn_id.rsplit("-", 1)[-1])
+    #         styles[clicked_btn_index] = active_style
+
+    #     filename = clicked_btn_id.replace("dynamic-sidebar-option-", "") + ".csv"
+    #     fileloc = osp.join(osp.dirname(data.__file__), filename)
+
+    #     df = pd.read_csv(fileloc)
+    #     options = [{"label": col, "value": col} for col in df.columns]
+
+    #     table_view = dash_table.DataTable(
+    #         id="table",
+    #         columns=[{"name": i, "id": i} for i in df.columns],
+    #         data=df.to_dict("records"),
+    #         style_header={
+    #             "color": "white",
+    #             "background-color": "#7d7d7d",
+    #             "border": "1px solid black",
+    #         },
+    #         style_cell={"border": "1px solid grey"},
+    #     )
+
+    #     return styles + [filename, options, options, [table_view]]
 
     @callback(
         Output("hidden-div-xdropdown", "children"), Input("xaxis-column", "value")
