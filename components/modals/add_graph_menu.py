@@ -14,7 +14,8 @@ def render_graph_menu_modal(df):
                             dcc.Dropdown(
                                 id="graph-type-dropdown",
                                 options=[
-                                    {"label": "histogram", "value": "histogram"}, {"label": "scatterplot", "value": "scatterplot"}
+                                    {"label": "histogram", "value": "histogram"},
+                                    {"label": "scatterplot", "value": "scatterplot"},
                                 ],
                                 className="dropdown",
                                 value="",

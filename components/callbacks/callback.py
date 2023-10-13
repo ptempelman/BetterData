@@ -129,7 +129,6 @@ def get_callbacks(app):
         gv4,
         ds,
     ):
-        print(graph_type)
         if graph_type == "histogram":
             graph = dcc.Graph(
                 figure=px.histogram(
