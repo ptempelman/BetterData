@@ -13,33 +13,42 @@ def render_graph_menu_modal(df):
                 children=[
                     html.Div(
                         [
-                            html.Div(id='metadata-graph', children=[
-                                dcc.Dropdown(
-                                    id="dataset-dropdown",
-                                    options=[
-                                        {"label": filename, "value": filename}
-                                        for filename in os.listdir(
-                                            os.path.dirname(data.__file__)
-                                        )
-                                        if filename.endswith(".csv")
-                                    ],
-                                    className="dropdown",
-                                    value="",
-                                    searchable=True,
-                                    placeholder="dataset",
-                                ),
-                                dcc.Dropdown(
-                                    id="graph-type-dropdown",
-                                    options=[
-                                        {"label": "histogram", "value": "histogram"},
-                                        {"label": "scatterplot", "value": "scatterplot"},
-                                    ],
-                                    className="dropdown",
-                                    value="",
-                                    searchable=True,
-                                    placeholder="graph type",
-                                ),
-                            ]),
+                            html.Div(
+                                id="metadata-graph",
+                                children=[
+                                    dcc.Dropdown(
+                                        id="dataset-dropdown",
+                                        options=[
+                                            {"label": filename, "value": filename}
+                                            for filename in os.listdir(
+                                                os.path.dirname(data.__file__)
+                                            )
+                                            if filename.endswith(".csv")
+                                        ],
+                                        className="dropdown",
+                                        value="",
+                                        searchable=True,
+                                        placeholder="dataset",
+                                    ),
+                                    dcc.Dropdown(
+                                        id="graph-type-dropdown",
+                                        options=[
+                                            {
+                                                "label": "histogram",
+                                                "value": "histogram",
+                                            },
+                                            {
+                                                "label": "scatterplot",
+                                                "value": "scatterplot",
+                                            },
+                                        ],
+                                        className="dropdown",
+                                        value="",
+                                        searchable=True,
+                                        placeholder="graph type",
+                                    ),
+                                ],
+                            ),
                             dcc.Dropdown(
                                 id="xaxis-column",
                                 options=[
@@ -66,7 +75,10 @@ def render_graph_menu_modal(df):
             ),
             dbc.ModalFooter(
                 dbc.Button(
-                    "Add", id="add-graph-button", className="ml-auto", n_clicks=0
+                    "Add",
+                    id={"type": "add-graph-button", "index": 0},
+                    className="ml-auto",
+                    n_clicks=0,
                 )
             ),
         ],

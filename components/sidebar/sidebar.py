@@ -13,6 +13,7 @@ def render_sidebar():
             # ),
             # *render_sidebar_dataset_options(),
             html.Div(
+                id="sidebar-add-button",
                 className="sidebar-add-button",
                 children=[dbc.Button("+", className="plus-sidebar")],
             ),
