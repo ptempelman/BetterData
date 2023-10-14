@@ -252,21 +252,22 @@ body {
     color: black;
 }
 
-#view-menu {
-    position: absolute;
-    z-index: 1000;
+.view-menu-button {
+    /* position: absolute; */
+    /* z-index: 1000; */
     width: 40px;
     height: 40px;
     background-color: black;
-    border-radius: 0 0 10px 0;
-    border: 1px solid white;
+    /* border: 1px solid white; */
+    margin-right: 10px;
+    border: 0;
 }
 
-#view-menu:hover {
+.view-menu-button:hover {
     background-color: rgb(72, 72, 72);
 }
 
-#view-menu:active {
+.view-menu-button:active {
     background-color: rgb(30, 30, 30);
 }
 
@@ -304,22 +305,24 @@ body {
 
 .graph-menu-options {
     position: absolute;
-    bottom: 0;
-    right: 0;
+    top: 0;
+    left: 0;
     z-index: 1000;
-    width: 40px;
-    height: 20px;
+    width: 48px;
+    height: 24px;
     /* display: flex; */
     flex-direction: row;
     display: none;
     margin-right: 20px;
     border: 0;
+    background-color: black;
 }
 
 .graph-menu-button {
     background-color: #111111;
     width: 20px;
     height: 20px;
+    margin: 2px;
     border: 0;
     align-items: center;
     justify-content: center;

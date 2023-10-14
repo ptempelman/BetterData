@@ -12,6 +12,7 @@ from dash import (
 )
 import pandas as pd
 import plotly.express as px
+from components.callbacks.container_components import get_graph, get_table
 from components.content.dashboard_item import render_dashboard_item
 import data
 import os
@@ -49,9 +50,22 @@ def get_callbacks(app):
 
     @app.callback(
         [
-            Output("hidden-div-dataset", "children"),
+            Output("hidden-div-dataset", "children", allow_duplicate=True),
         ],
         Input("dataset-dropdown", "value"),
+        prevent_initial_call=True,
+    )
+    def update_dataset(filename):
+        if not filename:
+            return no_update
+
+        return [filename]
+    
+    @app.callback(
+        [
+            Output("hidden-div-dataset", "children", allow_duplicate=True),
+        ],
+        Input("dataset-dropdown-table", "value"),
         prevent_initial_call=True,
     )
     def update_dataset(filename):
@@ -181,7 +195,7 @@ def get_callbacks(app):
         ],
         [Input({"type": "add-graph-button", "index": MATCH}, "n_clicks")],
         [
-            # State("hidden-div", "children"),
+            State("container-fill-type", "children"),
             State("hidden-div-xdropdown", "children"),
             State("hidden-div-ydropdown", "children"),
             State("hidden-div-graph-type", "children"),
@@ -189,8 +203,9 @@ def get_callbacks(app):
         ],
         prevent_initial_call=True,
     )
-    def add_graph(
+    def add_component(
         n,
+        container_fill_type,
         xcol,
         ycol,
         graph_type,
@@ -199,56 +214,20 @@ def get_callbacks(app):
         print("trying to add graph with clicks:", n)
         if n is None or n <= 0:
             return no_update
-
+        
         ctx = callback_context
-        print(f"graph added to {ctx.triggered[0]['prop_id'].split('.')[0]}")
 
-        if graph_type == "histogram":
-            graph = dcc.Graph(
-                figure=px.histogram(
-                    pd.read_csv(osp.join(osp.dirname(data.__file__), ds)),
-                    x=xcol,
-                    y=ycol,
-                    histfunc="avg",
-                    template="plotly_dark",
-                ),
-                className="main-graph",
-                config={
-                    "displaylogo": False,
-                    "modeBarButtonsToRemove": [
-                        "zoom",
-                        "pan",
-                        "select2d",
-                        "lasso2d",
-                        "autoscale",
-                    ],
-                },
-            )
-        else:  #  elif graph_type == "scatterplot":
-            graph = dcc.Graph(
-                figure=px.scatter(
-                    pd.read_csv(osp.join(osp.dirname(data.__file__), ds)),
-                    x=xcol,
-                    y=ycol,
-                    template="plotly_dark",
-                ),
-                className="main-graph",
-                config={
-                    "displaylogo": False,
-                    "modeBarButtonsToRemove": [
-                        "zoom",
-                        "pan",
-                        "select2d",
-                        "lasso2d",
-                        "autoscale",
-                    ],
-                },
-            )
-
+        if container_fill_type == 0:
+            component = get_graph(ctx, ds, graph_type, xcol, ycol)
+        # elif container_fill_type == 0:
+        else:
+            component = get_table(ds)
+            
+            
         inv = {"display": "none"}
         vis = {"display": "unset"}
 
-        return graph, inv, vis
+        return component, inv, vis
 
     @app.callback(
         [
@@ -305,22 +284,22 @@ def get_callbacks(app):
 
         return mc
 
-    @app.callback(
-        [
-            Output("view-menu-img", "src"),
-            Output("graph-view-container", "style"),
-            Output("table-view-container", "style"),
-        ],
-        [Input("view-menu", "n_clicks")],
-        prevent_initial_call=True,
-    )
-    def toggle_view(vm):
-        inv = {"display": "none"}
-        vis = {"display": "grid"}
-        if vm % 2 == 1:
-            return "assets/table_FILL0_wght400_GRAD0_opsz24.svg", inv, vis
-        else:
-            return "assets/bar_chart_FILL0_wght400_GRAD0_opsz24.svg", vis, inv
+    # @app.callback(
+    #     [
+    #         Output("view-menu-img", "src"),
+    #         Output("graph-view-container", "style"),
+    #         Output("table-view-container", "style"),
+    #     ],
+    #     [Input("view-menu", "n_clicks")],
+    #     prevent_initial_call=True,
+    # )
+    # def toggle_view(vm):
+    #     inv = {"display": "none"}
+    #     vis = {"display": "grid"}
+    #     if vm % 2 == 1:
+    #         return "assets/table_FILL0_wght400_GRAD0_opsz24.svg", inv, vis
+    #     else:
+    #         return "assets/bar_chart_FILL0_wght400_GRAD0_opsz24.svg", vis, inv
 
     @callback(
         [
@@ -341,9 +320,6 @@ def get_callbacks(app):
             return no_update
 
         print("graph deleted")
-        ctx = callback_context
-        print(ctx.triggered[0]["prop_id"].split(".")[0])
-        print(n_clicks)
         inv = {"display": "none"}
         vis = {"display": "unset"}
         return vis, inv
@@ -364,7 +340,6 @@ def get_callbacks(app):
 
         return graph_clicks + 1
 
-
     # @app.callback(
     #     [
     #         Output("draggable", "children", allow_duplicate=True),
@@ -382,8 +357,43 @@ def get_callbacks(app):
     #     n_clicks = [0 if x is None else x for x in n_clicks]
     #     if n_clicks is None or sum(n_clicks) != total_edit_clicks + 1:
     #         return no_update
-        
+
     #     print("removing extra container")
 
     #     dc.pop()
     #     return dc, total_edit_clicks + 1
+
+    @app.callback(
+        [
+            Output({"type": "menu-type", "index": ALL}, "style"),
+            Output("container-fill-type", "children"),
+            Output("menu-switch-clicks", "children"),
+        ],
+        Input({"type": "add-menu-type", "index": ALL}, "n_clicks"),
+        State("menu-switch-clicks", "children")
+    )
+    def switch_menus(n_clicks, total_clicks):
+        print("trying to switch menus with", n_clicks)
+        n_clicks = [0 if x == None else x for x in n_clicks]
+        if n_clicks is None or sum(n_clicks) != total_clicks + 1:
+            return no_update
+
+        print("switching menus")
+        ctx = callback_context
+        idx = int(ctx.triggered[0]["prop_id"].split(".")[0].split(":")[1][0])
+
+        inv = {"display": "none"}
+        vis = {"display": "unset"}
+
+        menu_visibilities = [inv] * len(n_clicks)
+        menu_visibilities[idx] = vis
+
+        return menu_visibilities, idx, total_clicks + 1
+
+    # @app.callback(
+    #     Output({"type": "menu-type", "index": MATCH}, "style"),
+    #     Input({"type": "add-menu-type", "index": MATCH}, "n_clicks"),
+    # )
+    # def switch_menus():
+    #     vis = {"display": "unset"}
+    #     return vis

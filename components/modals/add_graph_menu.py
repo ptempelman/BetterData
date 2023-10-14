@@ -7,12 +7,36 @@ import data
 def render_graph_menu_modal(df):
     return dbc.Modal(
         [
-            dbc.ModalHeader("Header"),
+            dbc.ModalHeader(
+                children=[
+                    html.Button(
+                        id={"type": "add-menu-type", "index": 0},
+                        className="view-menu-button",
+                        n_clicks=0,
+                        children=[
+                            html.Img(
+                                src="assets/bar_chart_FILL0_wght400_GRAD0_opsz24.svg",
+                            )
+                        ],
+                    ),
+                    html.Button(
+                        id={"type": "add-menu-type", "index": 1},
+                        className="view-menu-button",
+                        n_clicks=0,
+                        children=[
+                            html.Img(
+                                src="assets/table_FILL0_wght400_GRAD0_opsz24.svg",
+                            )
+                        ],
+                    ),
+                ]
+            ),
             dbc.ModalBody(
                 className="modal-body",
                 children=[
                     html.Div(
-                        [
+                        id={"type": "menu-type", "index": 0},
+                        children=[
                             html.Div(
                                 id="metadata-graph",
                                 children=[
@@ -69,7 +93,27 @@ def render_graph_menu_modal(df):
                                 searchable=True,
                                 placeholder="y-axis",
                             ),
-                        ]
+                        ],
+                    ),
+                    html.Div(
+                        id={"type": "menu-type", "index": 1},
+                        style={"display": "none"},
+                        children=[
+                            dcc.Dropdown(
+                                id="dataset-dropdown-table",
+                                options=[
+                                    {"label": filename, "value": filename}
+                                    for filename in os.listdir(
+                                        os.path.dirname(data.__file__)
+                                    )
+                                    if filename.endswith(".csv")
+                                ],
+                                className="dropdown",
+                                value="",
+                                searchable=True,
+                                placeholder="dataset",
+                            )
+                        ],
                     ),
                 ],
             ),
