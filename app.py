@@ -49,6 +49,9 @@ app.layout = html.Div(
                 html.Div(
                     id="total-modal-clicks", style={"display": "none"}, children=0
                 ),
+                html.Div(
+                    id="total-edit-clicks", style={"display": "none"}, children=0
+                ),
                 render_graph_menu_modal(df),
             ],
         ),

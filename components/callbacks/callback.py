@@ -154,7 +154,9 @@ def get_callbacks(app):
         prevent_initial_call=True,
     )
     def open_modal(n_clicks, total_clicks):
-        print("trying to open modal with clicks:", n_clicks)
+        print(
+            "trying to open modal with clicks:", n_clicks, " and total:", total_clicks
+        )
         total_clicks = int(total_clicks)
         if n_clicks is None or sum(n_clicks) != total_clicks + 1:
             return no_update
@@ -250,7 +252,7 @@ def get_callbacks(app):
 
     @app.callback(
         [
-            Output("draggable", "children"),
+            Output("draggable", "children", allow_duplicate=True),
             Output("hidden-div-new-container-index", "children"),
         ],
         Input({"type": "add-graph-button", "index": ALL}, "n_clicks"),
@@ -346,34 +348,42 @@ def get_callbacks(app):
         vis = {"display": "unset"}
         return vis, inv
 
-    # @callback(
-    #     Output({"type": "open-button", "index": MATCH}, "n_clicks"),
-    #     Input({"type": "graph-menu-edit", "index": MATCH}, "n_clicks"),
-    #     State({"type": "open-button", "index": MATCH}, "n_clicks"),
-    #     prevent_initial_call=True,
-    # )
-    # def edit_graph_open_button_clicks(n_clicks, graph_clicks):
-    #     print(f"trying to manipulate graph button after edit with clicks {n_clicks}")
+    @callback(
+        Output({"type": "open-button", "index": MATCH}, "n_clicks"),
+        Input({"type": "graph-menu-edit", "index": MATCH}, "n_clicks"),
+        State({"type": "open-button", "index": MATCH}, "n_clicks"),
+        prevent_initial_call=True,
+    )
+    def edit_graph_open_button_clicks(n_clicks, graph_clicks):
+        print(f"trying to manipulate graph button after edit with clicks {n_clicks}")
 
-    #     if n_clicks is None:
-    #         return no_update
+        if n_clicks is None:
+            return no_update
 
-    #     print(f"manipulating addgraphbutton clicks after edit to {graph_clicks + 1}")
+        print(f"manipulating addgraphbutton clicks after edit to {graph_clicks + 1}")
 
-    #     return graph_clicks + 1
+        return graph_clicks + 1
 
-    # @callback(
-    #     Output("total-modal-clicks", "children", allow_duplicate=True),
+
+    # @app.callback(
+    #     [
+    #         Output("draggable", "children", allow_duplicate=True),
+    #         Output("total-edit-clicks", "children")
+    #     ],
     #     Input({"type": "graph-menu-edit", "index": ALL}, "n_clicks"),
-    #     State("total-modal-clicks", "children"),
+    #     [
+    #         State("draggable", "children"),
+    #         State("total-edit-clicks", "children")
+    #     ],
     #     prevent_initial_call=True,
     # )
-    # def edit_graph_total_clicks(n_clicks, total_clicks):
-    #     print(f"trying to manipulate after edit with clicks {n_clicks}")
-
-    #     if n_clicks is None or all([x == None for x in n_clicks]):
+    # def take_away_extra_container(n_clicks, dc, total_edit_clicks):
+    #     print("trying to remove extra container with clicks", n_clicks)
+    #     n_clicks = [0 if x is None else x for x in n_clicks]
+    #     if n_clicks is None or sum(n_clicks) != total_edit_clicks + 1:
     #         return no_update
+        
+    #     print("removing extra container")
 
-    #     print(f"manipulating total clicks after edit to {int(total_clicks) + 1}")
-
-    #     return int(total_clicks) + 1
+    #     dc.pop()
+    #     return dc, total_edit_clicks + 1
