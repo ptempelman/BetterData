@@ -4,6 +4,8 @@ import dash_draggable
 import pandas as pd
 from dash import dcc
 
+from components.content.dashboard_item import render_dashboard_item
+
 
 def render_graph_grid():
     return html.Div(
@@ -26,112 +28,18 @@ def render_graph_grid():
                 className="grid-container",
                 children=[
                     dash_draggable.ResponsiveGridLayout(
+                        height=100,
+                        save=True,
                         id="draggable",
-                        children=[
-                            html.Div(
-                                [
-                                    dbc.Button(
-                                        [html.Div("+", className="plus-graph")],
-                                        className="add-graph-area",
-                                        id=f"open-button-{i}",
-                                        n_clicks=0,
-                                    ),
-                                    html.Div(
-                                        id=f"filled-container-{i}",
-                                        className="filled-container",
-                                        style={"display": "none"},
-                                        children=[
-                                            html.Div(
-                                                id=f"graph-menu-options-{i}",
-                                                className="graph-menu-options",
-                                                children=[
-                                                    html.Button(
-                                                        id=f"graph-menu-edit-{i}",
-                                                        className="graph-menu-button",
-                                                        children=html.Img(
-                                                            className="graph-menu-button-img",
-                                                            src="assets/edit_FILL0_wght400_GRAD0_opsz24.svg",
-                                                        ),
-                                                    ),
-                                                    html.Button(
-                                                        id=f"graph-menu-delete-{i}",
-                                                        className="graph-menu-button",
-                                                        children=html.Img(
-                                                            src="assets/delete_FILL0_wght400_GRAD0_opsz24.svg"
-                                                        ),
-                                                    ),
-                                                ],
-                                            ),
-                                            html.Div(
-                                                id=f"graph-container-{i}",
-                                                className="graph-container",
-                                            ),
-                                        ],
-                                    ),
-                                ],
-                                id=f"graph-square-{i}",
-                                className="graph-square",
-                            )
-                            for i in range(1, 5)
-                        ],
+                        resizeHandles=[
+                            "se",
+                            "sw",
+                            "ne",
+                            "nw",
+                        ],  # , 'n', 'w', 'e', 's'],
+                        children=[render_dashboard_item(0)],
                     )
                 ],
             ),
-            # html.Div(
-            #     id="graph-view-container",
-            #     className="grid-container",
-            #     children=[
-            #         html.Div(
-            #             className="grid-item",
-            #             children=[
-            #                 html.Div(
-            #                     [
-            #                         dbc.Button(
-            #                             [html.Div("+", className="plus-graph")],
-            #                             className="add-graph-area",
-            #                             id=f"open-button-{i}",
-            #                             n_clicks=0,
-            #                         ),
-            #                         html.Div(
-            #                             id=f"filled-container-{i}",
-            #                             className="filled-container",
-            #                             style={"display": "none"},
-            #                             children=[
-            #                                 html.Div(
-            #                                     id=f"graph-menu-options-{i}",
-            #                                     className="graph-menu-options",
-            #                                     children=[
-            #                                         html.Button(
-            #                                             id=f"graph-menu-edit-{i}",
-            #                                             className="graph-menu-button",
-            #                                             children=html.Img(
-            #                                                 className="graph-menu-button-img",
-            #                                                 src="assets/edit_FILL0_wght400_GRAD0_opsz24.svg",
-            #                                             ),
-            #                                         ),
-            #                                         html.Button(
-            #                                             id=f"graph-menu-delete-{i}",
-            #                                             className="graph-menu-button",
-            #                                             children=html.Img(
-            #                                                 src="assets/delete_FILL0_wght400_GRAD0_opsz24.svg"
-            #                                             ),
-            #                                         ),
-            #                                     ],
-            #                                 ),
-            #                                 html.Div(
-            #                                     id=f"graph-container-{i}",
-            #                                     className="graph-container",
-            #                                 ),
-            #                             ],
-            #                         ),
-            #                     ],
-            #                     id=f"graph-square-{i}",
-            #                     className="graph-square",
-            #                 )
-            #             ],
-            #         )
-            #         for i in range(1, 5)
-            #     ],
-            # ),
         ],
     )

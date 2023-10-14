@@ -1,10 +1,26 @@
-from dash import dcc, callback, Output, Input, State, callback_context, dependencies
+from dash import (
+    dcc,
+    callback,
+    Output,
+    Input,
+    State,
+    callback_context,
+    dependencies,
+    MATCH,
+    ALL,
+    no_update,
+)
 import pandas as pd
 import plotly.express as px
+from components.content.dashboard_item import render_dashboard_item
 import data
 import os
 import os.path as osp
 from dash import dash_table
+import dash_bootstrap_components as dbc
+from dash import html
+import dash_bootstrap_components as dbc
+import dash_draggable
 
 
 def get_callbacks(app):
@@ -16,77 +32,95 @@ def get_callbacks(app):
 
     @app.callback(
         [
-            Output("hidden-div-dataset", "children"),
             Output("xaxis-column", "options"),
             Output("yaxis-column", "options"),
+        ],
+        Input("hidden-div-dataset", "children"),
+        prevent_initial_call=True,
+    )
+    def update_columns(filename):
+        if not filename:
+            return no_update
+        fileloc = osp.join(osp.dirname(data.__file__), filename)
+
+        df = pd.read_csv(fileloc)
+        options = [{"label": col, "value": col} for col in df.columns]
+        return options, options
+
+    @app.callback(
+        [
+            Output("hidden-div-dataset", "children"),
         ],
         Input("dataset-dropdown", "value"),
         prevent_initial_call=True,
     )
     def update_dataset(filename):
-        fileloc = osp.join(osp.dirname(data.__file__), filename)
+        if not filename:
+            return no_update
 
-        df = pd.read_csv(fileloc)
-        options = [{"label": col, "value": col} for col in df.columns]
-        return filename, options, options
+        return [filename]
 
-    # @app.callback(
-    #     [
-    #         Output(f"dynamic-sidebar-option-{filename}", "className")
-    #         for filename in filenames
-    #     ]
-    #     + [
-    #         Output("hidden-div-dataset", "children"),
-    #         Output("xaxis-column", "options"),
-    #         Output("yaxis-column", "options"),
-    #         Output("table-view-container", "children"),
-    #     ],
-    #     [
-    #         Input(f"dynamic-sidebar-option-{filename}", "n_clicks")
-    #         for filename in filenames
-    #     ],
-    #     prevent_initial_call=True,
-    # )
-    # def update_button_color(*btn_clicks):
-    #     ctx = callback_context
-    #     clicked_btn_id = ctx.triggered[0]["prop_id"].split(".")[0]
+    # # @app.callback(
+    # #     [
+    # #         Output(f"dynamic-sidebar-option-{filename}", "className")
+    # #         for filename in filenames
+    # #     ]
+    # #     + [
+    # #         Output("hidden-div-dataset", "children"),
+    # #         Output("xaxis-column", "options"),
+    # #         Output("yaxis-column", "options"),
+    # #         Output("table-view-container", "children"),
+    # #     ],
+    # #     [
+    # #         Input(f"dynamic-sidebar-option-{filename}", "n_clicks")
+    # #         for filename in filenames
+    # #     ],
+    # #     prevent_initial_call=True,
+    # # )
+    # # def update_button_color(*btn_clicks):
+    # #     ctx = callback_context
+    # #     clicked_btn_id = ctx.triggered[0]["prop_id"].split(".")[0]
 
-    #     default_style = "sidebar-option"
-    #     active_style = "sidebar-option-selected"
-    #     styles = [default_style for _ in range(len(filenames))]
+    # #     default_style = "sidebar-option"
+    # #     active_style = "sidebar-option-selected"
+    # #     styles = [default_style for _ in range(len(filenames))]
 
-    #     if clicked_btn_id.rsplit("-", 1)[-1] in filenames:
-    #         clicked_btn_index = filenames.index(clicked_btn_id.rsplit("-", 1)[-1])
-    #         styles[clicked_btn_index] = active_style
+    # #     if clicked_btn_id.rsplit("-", 1)[-1] in filenames:
+    # #         clicked_btn_index = filenames.index(clicked_btn_id.rsplit("-", 1)[-1])
+    # #         styles[clicked_btn_index] = active_style
 
-    #     filename = clicked_btn_id.replace("dynamic-sidebar-option-", "") + ".csv"
-    #     fileloc = osp.join(osp.dirname(data.__file__), filename)
+    # #     filename = clicked_btn_id.replace("dynamic-sidebar-option-", "") + ".csv"
+    # #     fileloc = osp.join(osp.dirname(data.__file__), filename)
 
-    #     df = pd.read_csv(fileloc)
-    #     options = [{"label": col, "value": col} for col in df.columns]
+    # #     df = pd.read_csv(fileloc)
+    # #     options = [{"label": col, "value": col} for col in df.columns]
 
-    #     table_view = dash_table.DataTable(
-    #         id="table",
-    #         columns=[{"name": i, "id": i} for i in df.columns],
-    #         data=df.to_dict("records"),
-    #         style_header={
-    #             "color": "white",
-    #             "background-color": "#7d7d7d",
-    #             "border": "1px solid black",
-    #         },
-    #         style_cell={"border": "1px solid grey"},
-    #     )
+    # #     table_view = dash_table.DataTable(
+    # #         id="table",
+    # #         columns=[{"name": i, "id": i} for i in df.columns],
+    # #         data=df.to_dict("records"),
+    # #         style_header={
+    # #             "color": "white",
+    # #             "background-color": "#7d7d7d",
+    # #             "border": "1px solid black",
+    # #         },
+    # #         style_cell={"border": "1px solid grey"},
+    # #     )
 
-    #     return styles + [filename, options, options, [table_view]]
+    # #     return styles + [filename, options, options, [table_view]]
 
     @callback(
-        Output("hidden-div-xdropdown", "children"), Input("xaxis-column", "value")
+        Output("hidden-div-xdropdown", "children"),
+        Input("xaxis-column", "value"),
+        prevent_initial_call=True,
     )
     def update_xaxis(col):
         return col
 
     @callback(
-        Output("hidden-div-ydropdown", "children"), Input("yaxis-column", "value")
+        Output("hidden-div-ydropdown", "children"),
+        Input("yaxis-column", "value"),
+        prevent_initial_call=True,
     )
     def update_yaxis(col):
         return col
@@ -94,57 +128,79 @@ def get_callbacks(app):
     @callback(
         Output("hidden-div-graph-type", "children"),
         Input("graph-type-dropdown", "value"),
+        prevent_initial_call=True,
     )
     def update_graph_type(graph_type):
         return graph_type
 
     @callback(
+        Output("modal", "is_open", allow_duplicate=True),
+        Input({"type": "add-graph-button", "index": ALL}, "n_clicks"),
+        prevent_initial_call=True,
+    )
+    def close_modal(n):
+        if n is None or n[-1] <= 0:
+            return no_update
+        print("modal closed")
+        return False
+
+    @callback(
         [
-            Output(f"graph-container-{i + 1}", "children", allow_duplicate=True)
-            for i in range(4)
-        ]
-        + [
-            Output(f"open-button-{i + 1}", "style", allow_duplicate=True)
-            for i in range(4)
-        ]
-        + [
-            Output(f"filled-container-{i + 1}", "style", allow_duplicate=True)
-            for i in range(4)
-        ]
-        + [Output("modal", "is_open", allow_duplicate=True)],
-        [Input("add-graph-button", "n_clicks")],
+            Output("modal", "is_open", allow_duplicate=True),
+            Output("total-modal-clicks", "children", allow_duplicate=True),
+        ],
+        Input({"type": "open-button", "index": ALL}, "n_clicks"),
+        State("total-modal-clicks", "children"),
+        prevent_initial_call=True,
+    )
+    def open_modal(n_clicks, total_clicks):
+        print("trying to open modal with clicks:", n_clicks)
+        total_clicks = int(total_clicks)
+        if n_clicks is None or sum(n_clicks) != total_clicks + 1:
+            return no_update
+        print(f"modal opened\n")
+        return True, total_clicks + 1
+
+    @callback(
         [
-            State("hidden-div", "children"),
+            Output(
+                {"type": "graph-container", "index": MATCH},
+                "children",
+                allow_duplicate=True,
+            ),
+            Output(
+                {"type": "open-button", "index": MATCH}, "style", allow_duplicate=True
+            ),
+            Output(
+                {"type": "filled-container", "index": MATCH},
+                "style",
+                allow_duplicate=True,
+            ),
+        ],
+        [Input({"type": "add-graph-button", "index": MATCH}, "n_clicks")],
+        [
+            # State("hidden-div", "children"),
             State("hidden-div-xdropdown", "children"),
             State("hidden-div-ydropdown", "children"),
             State("hidden-div-graph-type", "children"),
-        ]
-        + [State(f"open-button-{i + 1}", "style") for i in range(4)]
-        + [State(f"graph-container-{i + 1}", "children") for i in range(4)]
-        + [State(f"filled-container-{i + 1}", "style") for i in range(4)]
-        + [State("hidden-div-dataset", "children")],
+            State("hidden-div-dataset", "children"),
+        ],
         prevent_initial_call=True,
     )
     def add_graph(
         n,
-        btn_id,
         xcol,
         ycol,
         graph_type,
-        vis1,
-        vis2,
-        vis3,
-        vis4,
-        gc1,
-        gc2,
-        gc3,
-        gc4,
-        gv1,
-        gv2,
-        gv3,
-        gv4,
         ds,
     ):
+        print("trying to add graph with clicks:", n)
+        if n is None or n <= 0:
+            return no_update
+
+        ctx = callback_context
+        print(f"graph added to {ctx.triggered[0]['prop_id'].split('.')[0]}")
+
         if graph_type == "histogram":
             graph = dcc.Graph(
                 figure=px.histogram(
@@ -166,7 +222,7 @@ def get_callbacks(app):
                     ],
                 },
             )
-        elif graph_type == "scatterplot":
+        else:  #  elif graph_type == "scatterplot":
             graph = dcc.Graph(
                 figure=px.scatter(
                     pd.read_csv(osp.join(osp.dirname(data.__file__), ds)),
@@ -190,38 +246,62 @@ def get_callbacks(app):
         inv = {"display": "none"}
         vis = {"display": "unset"}
 
-        idx = int(btn_id[-1]) - 1
-
-        graphs = [gc1, gc2, gc3, gc4]
-        button_vis = [vis1, vis2, vis3, vis4]
-        graph_vis = [gv1, gv2, gv3, gv4]
-
-        graphs[idx] = [graph]
-        button_vis[idx] = inv
-        graph_vis[idx] = vis
-
-        return graphs + button_vis + graph_vis + [False]
+        return graph, inv, vis
 
     @app.callback(
         [
-            Output("modal", "is_open", allow_duplicate=True),
-            Output("hidden-div", "children", allow_duplicate=True),
+            Output("draggable", "children"),
+            Output("hidden-div-new-container-index", "children"),
         ],
+        Input({"type": "add-graph-button", "index": ALL}, "n_clicks"),
         [
-            Input("open-button-1", "n_clicks"),
-            Input("open-button-2", "n_clicks"),
-            Input("open-button-3", "n_clicks"),
-            Input("open-button-4", "n_clicks"),
+            State("hidden-div-new-container-index", "children"),
+            State("draggable", "children"),
         ],
-        [State("modal", "is_open")],
         prevent_initial_call=True,
     )
-    def toggle_modal(b1, b2, b3, b4, is_open):
+    def visualize_empty_container(n_clicks, container_index, dc):
+        if n_clicks is None or n_clicks[-1] <= 0:
+            return no_update
+
+        container_index = container_index[0] + 1
+
+        dc.append(render_dashboard_item(container_index))
+        print(f"updated container index: {container_index}")
+
+        return dc, [container_index]
+
+    @app.callback(
+        Output("modal", "children"),
+        Input({"type": "open-button", "index": ALL}, "n_clicks"),
+        [State("total-modal-clicks", "children"), State("modal", "children")],
+        prevent_initial_call=True,
+    )
+    def update_modal_footer_button(n_clicks, total_clicks, mc):
+        total_clicks = int(total_clicks)
+        print(
+            f"trying to update modal footer with {n_clicks} == {total_clicks}",
+            sum(n_clicks) == total_clicks,
+        )
+        if n_clicks is None or sum(n_clicks) != total_clicks + 1:
+            return no_update
+
         ctx = callback_context
-        if not ctx.triggered:
-            return False, "nothing"
-        else:
-            return True, ctx.triggered[0]["prop_id"].split(".")[0]
+        print(
+            f"updated modal footer button {ctx.triggered[0]['prop_id'].split('.')[0]}"
+        )
+        idx = int(ctx.triggered[0]["prop_id"].split(".")[0].split(":")[1][0])
+
+        mc[-1] = dbc.ModalFooter(
+            dbc.Button(
+                "Add",
+                id={"type": "add-graph-button", "index": idx},
+                className="ml-auto",
+                n_clicks=0,
+            )
+        )
+
+        return mc
 
     @app.callback(
         [
@@ -242,48 +322,58 @@ def get_callbacks(app):
 
     @callback(
         [
-            Output(f"open-button-{i + 1}", "style", allow_duplicate=True)
-            for i in range(4)
-        ]
-        + [
-            Output(f"filled-container-{i + 1}", "style", allow_duplicate=True)
-            for i in range(4)
+            Output(
+                {"type": "open-button", "index": MATCH}, "style", allow_duplicate=True
+            ),
+            Output(
+                {"type": "filled-container", "index": MATCH},
+                "style",
+                allow_duplicate=True,
+            ),
         ],
-        [Input(f"graph-menu-delete-{i + 1}", "n_clicks") for i in range(4)],
-        [State(f"open-button-{i + 1}", "style") for i in range(4)]
-        + [State(f"filled-container-{i + 1}", "style") for i in range(4)],
+        Input({"type": "graph-menu-delete", "index": MATCH}, "n_clicks"),
         prevent_initial_call=True,
     )
-    def delete_graph(g1, g2, g3, g4, vis1, vis2, vis3, vis4, gv1, gv2, gv3, gv4):
+    def delete_graph(n_clicks):
+        if n_clicks is None or n_clicks <= 0:
+            return no_update
+
+        print("graph deleted")
+        ctx = callback_context
+        print(ctx.triggered[0]["prop_id"].split(".")[0])
+        print(n_clicks)
         inv = {"display": "none"}
         vis = {"display": "unset"}
+        return vis, inv
 
-        ctx = callback_context
-        clicked_btn_id = ctx.triggered[0]["prop_id"].split(".")[0]
-        idx = int(clicked_btn_id[-1]) - 1
+    # @callback(
+    #     Output({"type": "open-button", "index": MATCH}, "n_clicks"),
+    #     Input({"type": "graph-menu-edit", "index": MATCH}, "n_clicks"),
+    #     State({"type": "open-button", "index": MATCH}, "n_clicks"),
+    #     prevent_initial_call=True,
+    # )
+    # def edit_graph_open_button_clicks(n_clicks, graph_clicks):
+    #     print(f"trying to manipulate graph button after edit with clicks {n_clicks}")
 
-        button_vis = [vis1, vis2, vis3, vis4]
-        graph_vis = [gv1, gv2, gv3, gv4]
+    #     if n_clicks is None:
+    #         return no_update
 
-        button_vis[idx] = vis
-        graph_vis[idx] = inv
+    #     print(f"manipulating addgraphbutton clicks after edit to {graph_clicks + 1}")
 
-        return button_vis + graph_vis
+    #     return graph_clicks + 1
 
-    @callback(
-        [
-            Output("modal", "is_open", allow_duplicate=True),
-            Output("hidden-div", "children", allow_duplicate=True),
-        ],
-        [Input(f"graph-menu-edit-{i + 1}", "n_clicks") for i in range(4)],
-        [],
-        prevent_initial_call=True,
-    )
-    def edit_graph(ic1, ic2, ic3, ic4):
-        ctx = callback_context
-        clicked_btn_id = ctx.triggered[0]["prop_id"].split(".")[0]
-        idx = int(clicked_btn_id[-1]) - 1
+    # @callback(
+    #     Output("total-modal-clicks", "children", allow_duplicate=True),
+    #     Input({"type": "graph-menu-edit", "index": ALL}, "n_clicks"),
+    #     State("total-modal-clicks", "children"),
+    #     prevent_initial_call=True,
+    # )
+    # def edit_graph_total_clicks(n_clicks, total_clicks):
+    #     print(f"trying to manipulate after edit with clicks {n_clicks}")
 
-        clicks = [ic1, ic2, ic3, ic4]
-        clicks[idx] += 1
-        return True, "open-button-" + str(idx + 1)
+    #     if n_clicks is None or all([x == None for x in n_clicks]):
+    #         return no_update
+
+    #     print(f"manipulating total clicks after edit to {int(total_clicks) + 1}")
+
+    #     return int(total_clicks) + 1
