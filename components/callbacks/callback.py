@@ -143,12 +143,14 @@ def get_callbacks(app):
             return no_update
         print("modal closed")
         return False
-    
+
     @callback(
-        [Output("modal", "is_open", allow_duplicate=True),
-         Output("total-modal-clicks", "children")],
-        [Input({"type": "open-button", "index": ALL}, "n_clicks"),
-         Input("total-modal-clicks", "children")],
+        [
+            Output("modal", "is_open", allow_duplicate=True),
+            Output("total-modal-clicks", "children", allow_duplicate=True),
+        ],
+        Input({"type": "open-button", "index": ALL}, "n_clicks"),
+        State("total-modal-clicks", "children"),
         prevent_initial_call=True,
     )
     def open_modal(n_clicks, total_clicks):
@@ -271,19 +273,23 @@ def get_callbacks(app):
 
     @app.callback(
         Output("modal", "children"),
-        [Input({"type": "open-button", "index": ALL}, "n_clicks"),
-         Input("total-modal-clicks", "children")],
-        State("modal", "children"),
+        Input({"type": "open-button", "index": ALL}, "n_clicks"),
+        [State("total-modal-clicks", "children"), State("modal", "children")],
         prevent_initial_call=True,
     )
     def update_modal_footer_button(n_clicks, total_clicks, mc):
         total_clicks = int(total_clicks)
-        print(f"trying to update modal footer with {n_clicks} == {total_clicks}", sum(n_clicks) == total_clicks)
-        if n_clicks is None or sum(n_clicks) != total_clicks:
+        print(
+            f"trying to update modal footer with {n_clicks} == {total_clicks}",
+            sum(n_clicks) == total_clicks,
+        )
+        if n_clicks is None or sum(n_clicks) != total_clicks + 1:
             return no_update
-        
-        print("updated modal footer button")
+
         ctx = callback_context
+        print(
+            f"updated modal footer button {ctx.triggered[0]['prop_id'].split('.')[0]}"
+        )
         idx = int(ctx.triggered[0]["prop_id"].split(".")[0].split(":")[1][0])
 
         mc[-1] = dbc.ModalFooter(
@@ -294,7 +300,7 @@ def get_callbacks(app):
                 n_clicks=0,
             )
         )
-        
+
         return mc
 
     @app.callback(
@@ -331,7 +337,7 @@ def get_callbacks(app):
     def delete_graph(n_clicks):
         if n_clicks is None or n_clicks <= 0:
             return no_update
-        
+
         print("graph deleted")
         ctx = callback_context
         print(ctx.triggered[0]["prop_id"].split(".")[0])
@@ -341,16 +347,33 @@ def get_callbacks(app):
         return vis, inv
 
     # @callback(
-    #     [
-    #         Output("modal", "is_open", allow_duplicate=True),
-    #         Output("hidden-div", "children", allow_duplicate=True),
-    #     ],
-    #     [Input({"type": "graph-menu-edit", "index": MATCH}, "n_clicks")],
+    #     Output({"type": "open-button", "index": MATCH}, "n_clicks"),
+    #     Input({"type": "graph-menu-edit", "index": MATCH}, "n_clicks"),
+    #     State({"type": "open-button", "index": MATCH}, "n_clicks"),
     #     prevent_initial_call=True,
     # )
-    # def edit_graph(ic1):
-    #     ctx = callback_context
-    #     clicked_btn_id = ctx.triggered[0]["prop_id"].split(".")[0]
-    #     idx = int(clicked_btn_id[-1]) - 1
+    # def edit_graph_open_button_clicks(n_clicks, graph_clicks):
+    #     print(f"trying to manipulate graph button after edit with clicks {n_clicks}")
 
-    #     return True, ic1
+    #     if n_clicks is None:
+    #         return no_update
+
+    #     print(f"manipulating addgraphbutton clicks after edit to {graph_clicks + 1}")
+
+    #     return graph_clicks + 1
+
+    # @callback(
+    #     Output("total-modal-clicks", "children", allow_duplicate=True),
+    #     Input({"type": "graph-menu-edit", "index": ALL}, "n_clicks"),
+    #     State("total-modal-clicks", "children"),
+    #     prevent_initial_call=True,
+    # )
+    # def edit_graph_total_clicks(n_clicks, total_clicks):
+    #     print(f"trying to manipulate after edit with clicks {n_clicks}")
+
+    #     if n_clicks is None or all([x == None for x in n_clicks]):
+    #         return no_update
+
+    #     print(f"manipulating total clicks after edit to {int(total_clicks) + 1}")
+
+    #     return int(total_clicks) + 1
