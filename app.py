@@ -52,6 +52,10 @@ app.layout = html.Div(
                 html.Div(
                     id="total-edit-clicks", style={"display": "none"}, children=0
                 ),
+                html.Div(
+                    id="menu-switch-clicks", style={"display": "none"}, children=0
+                ),
+                html.Div(id="container-fill-type", style={"display": "none"}, children=0),
                 render_graph_menu_modal(df),
             ],
         ),
