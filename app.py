@@ -36,12 +36,19 @@ app.layout = html.Div(
             children=[
                 render_sidebar(),
                 render_graph_grid(),
-                html.Div(id="hidden-div-new-container-index", style={"display": "none"}, children=[0]),
+                html.Div(
+                    id="hidden-div-new-container-index",
+                    style={"display": "none"},
+                    children=[0],
+                ),
                 html.Div(id="hidden-div", style={"display": "none"}),
                 html.Div(id="hidden-div-dataset", style={"display": "none"}),
                 html.Div(id="hidden-div-graph-type", style={"display": "none"}),
                 html.Div(id="hidden-div-xdropdown", style={"display": "none"}),
                 html.Div(id="hidden-div-ydropdown", style={"display": "none"}),
+                html.Div(
+                    id="total-modal-clicks", style={"display": "none"}, children=0
+                ),
                 render_graph_menu_modal(df),
             ],
         ),

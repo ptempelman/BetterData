@@ -143,18 +143,21 @@ def get_callbacks(app):
             return no_update
         print("modal closed")
         return False
-
+    
     @callback(
-        Output("modal", "is_open", allow_duplicate=True),
-        Input({"type": "open-button", "index": ALL}, "n_clicks"),
+        [Output("modal", "is_open", allow_duplicate=True),
+         Output("total-modal-clicks", "children")],
+        [Input({"type": "open-button", "index": ALL}, "n_clicks"),
+         Input("total-modal-clicks", "children")],
         prevent_initial_call=True,
     )
-    def open_modal(n_clicks):
-        print("trying to open modal", n_clicks)
-        if n_clicks[-1] == None or n_clicks[-1] == 0:
+    def open_modal(n_clicks, total_clicks):
+        print("trying to open modal with clicks:", n_clicks)
+        total_clicks = int(total_clicks)
+        if n_clicks is None or sum(n_clicks) != total_clicks + 1:
             return no_update
-        print("modal opened")
-        return True
+        print(f"modal opened\n")
+        return True, total_clicks + 1
 
     @callback(
         [
@@ -189,10 +192,12 @@ def get_callbacks(app):
         graph_type,
         ds,
     ):
-        if n is None or n <= 0 or not ds:
+        print("trying to add graph with clicks:", n)
+        if n is None or n <= 0:
             return no_update
 
-        print("graph added")
+        ctx = callback_context
+        print(f"graph added to {ctx.triggered[0]['prop_id'].split('.')[0]}")
 
         if graph_type == "histogram":
             graph = dcc.Graph(
@@ -260,17 +265,24 @@ def get_callbacks(app):
         container_index = container_index[0] + 1
 
         dc.append(render_dashboard_item(container_index))
-        print("updated container index", container_index)
+        print(f"updated container index: {container_index}")
 
         return dc, [container_index]
 
     @app.callback(
         Output("modal", "children"),
-        Input({"type": "open-button", "index": ALL}, "n_clicks"),
+        [Input({"type": "open-button", "index": ALL}, "n_clicks"),
+         Input("total-modal-clicks", "children")],
         State("modal", "children"),
         prevent_initial_call=True,
     )
-    def update_modal_footer_button(b1, mc):
+    def update_modal_footer_button(n_clicks, total_clicks, mc):
+        total_clicks = int(total_clicks)
+        print(f"trying to update modal footer with {n_clicks} == {total_clicks}", sum(n_clicks) == total_clicks)
+        if n_clicks is None or sum(n_clicks) != total_clicks:
+            return no_update
+        
+        print("updated modal footer button")
         ctx = callback_context
         idx = int(ctx.triggered[0]["prop_id"].split(".")[0].split(":")[1][0])
 
@@ -282,7 +294,7 @@ def get_callbacks(app):
                 n_clicks=0,
             )
         )
-
+        
         return mc
 
     @app.callback(
@@ -302,37 +314,31 @@ def get_callbacks(app):
         else:
             return "assets/bar_chart_FILL0_wght400_GRAD0_opsz24.svg", vis, inv
 
-    # @callback(
-    #     [
-    #         Output(
-    #             {"type": "open-button", "index": MATCH}, "style", allow_duplicate=True
-    #         ),
-    #         Output(
-    #             {"type": "filled-container", "index": MATCH},
-    #             "style",
-    #             allow_duplicate=True,
-    #         ),
-    #     ],
-    #     [Input({"type": "graph-menu-delete", "index": MATCH}, "n_clicks")],
-    #     # [State({'type': 'open-button', 'index': MATCH}, "style"),
-    #     #  State({'type': 'filled-container', 'index': MATCH})],
-    #     prevent_initial_call=True,
-    # )
-    # def delete_graph(g1):
-    #     inv = {"display": "none"}
-    #     vis = {"display": "unset"}
-
-    #     ctx = callback_context
-    #     clicked_btn_id = ctx.triggered[0]["prop_id"].split(".")[0]
-    #     idx = int(clicked_btn_id[-1]) - 1
-
-    #     # button_vis = [vis1]
-    #     # graph_vis = [gv1]
-
-    #     # button_vis[idx] = vis
-    #     # graph_vis[idx] = inv
-
-    #     return vis, inv
+    @callback(
+        [
+            Output(
+                {"type": "open-button", "index": MATCH}, "style", allow_duplicate=True
+            ),
+            Output(
+                {"type": "filled-container", "index": MATCH},
+                "style",
+                allow_duplicate=True,
+            ),
+        ],
+        Input({"type": "graph-menu-delete", "index": MATCH}, "n_clicks"),
+        prevent_initial_call=True,
+    )
+    def delete_graph(n_clicks):
+        if n_clicks is None or n_clicks <= 0:
+            return no_update
+        
+        print("graph deleted")
+        ctx = callback_context
+        print(ctx.triggered[0]["prop_id"].split(".")[0])
+        print(n_clicks)
+        inv = {"display": "none"}
+        vis = {"display": "unset"}
+        return vis, inv
 
     # @callback(
     #     [
