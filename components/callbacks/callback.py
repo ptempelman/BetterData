@@ -12,6 +12,7 @@ from dash import (
 )
 import pandas as pd
 import plotly.express as px
+from components.content.dashboard_item import render_dashboard_item
 import data
 import os
 import os.path as osp
@@ -149,6 +150,7 @@ def get_callbacks(app):
         prevent_initial_call=True,
     )
     def open_modal(n_clicks):
+        print("trying to open modal", n_clicks)
         if n_clicks[-1] == None or n_clicks[-1] == 0:
             return no_update
         print("modal opened")
@@ -161,7 +163,9 @@ def get_callbacks(app):
                 "children",
                 allow_duplicate=True,
             ),
-            Output({"type": "open-button", "index": MATCH}, "style", allow_duplicate=True),
+            Output(
+                {"type": "open-button", "index": MATCH}, "style", allow_duplicate=True
+            ),
             Output(
                 {"type": "filled-container", "index": MATCH},
                 "style",
@@ -211,8 +215,7 @@ def get_callbacks(app):
                     ],
                 },
             )
-        # elif graph_type == "scatterplot":
-        else:
+        else:  #  elif graph_type == "scatterplot":
             graph = dcc.Graph(
                 figure=px.scatter(
                     pd.read_csv(osp.join(osp.dirname(data.__file__), ds)),
@@ -243,107 +246,31 @@ def get_callbacks(app):
             Output("draggable", "children"),
             Output("hidden-div-new-container-index", "children"),
         ],
-        Input("sidebar-add-button", "n_clicks"),
+        Input({"type": "add-graph-button", "index": ALL}, "n_clicks"),
         [
             State("hidden-div-new-container-index", "children"),
             State("draggable", "children"),
         ],
         prevent_initial_call=True,
     )
-    def add_empty_container(n_clicks, container_index, dc):
-        if n_clicks is None or n_clicks <= 0:
+    def visualize_empty_container(n_clicks, container_index, dc):
+        if n_clicks is None or n_clicks[-1] <= 0:
             return no_update
-        
+
         container_index = container_index[0] + 1
-        print(container_index)
-        dc.append(
-            dash_draggable.DashboardItem(
-                i=f"draggable-{container_index}",
-                h=9,
-                w=6,
-                minH=4,
-                minW=4,
-                x=0,
-                y=0,
-                children=[
-                    html.Div(
-                        [
-                            dbc.Button(
-                                [html.Div("+", className="plus-graph")],
-                                className="add-graph-area",
-                                id={"type": "open-button", "index": container_index},
-                                n_clicks=0,
-                            ),
-                            html.Div(
-                                id={
-                                    "type": "filled-container",
-                                    "index": container_index,
-                                },
-                                className="filled-container",
-                                style={"display": "none"},
-                                children=[
-                                    html.Div(
-                                        id={
-                                            "type": "graph-menu-options",
-                                            "index": container_index,
-                                        },
-                                        className="graph-menu-options",
-                                        children=[
-                                            html.Button(
-                                                id={
-                                                    "type": "graph-menu-edit",
-                                                    "index": container_index,
-                                                },
-                                                className="graph-menu-button",
-                                                children=html.Img(
-                                                    className="graph-menu-button-img",
-                                                    src="assets/edit_FILL0_wght400_GRAD0_opsz24.svg",
-                                                ),
-                                            ),
-                                            html.Button(
-                                                id={
-                                                    "type": "graph-menu-delete",
-                                                    "index": container_index,
-                                                },
-                                                className="graph-menu-button",
-                                                children=html.Img(
-                                                    src="assets/delete_FILL0_wght400_GRAD0_opsz24.svg"
-                                                ),
-                                            ),
-                                        ],
-                                    ),
-                                    html.Div(
-                                        id={
-                                            "type": "graph-container",
-                                            "index": container_index,
-                                        },
-                                        className="graph-container",
-                                    ),
-                                ],
-                            ),
-                        ],
-                        id={"type": "graph-square", "index": container_index},
-                        className="graph-square",
-                    )
-                ],
-            )
-        )
+
+        dc.append(render_dashboard_item(container_index))
+        print("updated container index", container_index)
+
         return dc, [container_index]
 
     @app.callback(
-        [
-            Output("modal", "is_open", allow_duplicate=True),
-            # Output("hidden-div", "children", allow_duplicate=True),
-            Output("modal", "children"),
-        ],
-        [
-            Input({"type": "open-button", "index": ALL}, "n_clicks"),
-            Input("modal", "children"),
-        ],
-        [State("modal", "is_open")],
+        Output("modal", "children"),
+        Input({"type": "open-button", "index": ALL}, "n_clicks"),
+        State("modal", "children"),
         prevent_initial_call=True,
     )
-    def toggle_modal(b1, mc, is_open):
+    def update_modal_footer_button(b1, mc):
         ctx = callback_context
         idx = int(ctx.triggered[0]["prop_id"].split(".")[0].split(":")[1][0])
 
@@ -356,10 +283,7 @@ def get_callbacks(app):
             )
         )
 
-        if not ctx.triggered:
-            return False, mc
-        else:
-            return True, mc
+        return mc
 
     @app.callback(
         [
