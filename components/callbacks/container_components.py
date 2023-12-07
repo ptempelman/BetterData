@@ -26,6 +26,8 @@ import dash_draggable
 def get_graph(ctx, ds, graph_type, xcol, ycol, size, color, hovername):
     print(f"graph added to {ctx.triggered[0]['prop_id'].split('.')[0]}")
     if graph_type == "histogram":
+        color_setting = color if color != "" else None
+        hover_setting = hovername if hovername != "" else None
         graph = dcc.Graph(
             figure=px.histogram(
                 pd.read_csv(osp.join(osp.dirname(data.__file__), ds)),
@@ -33,6 +35,8 @@ def get_graph(ctx, ds, graph_type, xcol, ycol, size, color, hovername):
                 y=ycol,
                 histfunc="avg",
                 template="plotly_dark",
+                color=color_setting,
+                hover_name=hover_setting,
             ),
             className="main-graph",
             config={

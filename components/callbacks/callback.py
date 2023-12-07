@@ -52,6 +52,11 @@ def get_callbacks(app):
         [
             Output("xaxis-column", "options"),
             Output("yaxis-column", "options"),
+            Output("dropdown-hovername-hist", "options"),
+            Output("dropdown-color-hist", "options"),
+            Output("dropdown-size", "options"),
+            Output("dropdown-color", "options"),
+            Output("dropdown-hovername", "options"),
         ],
         Input("hidden-div-dataset", "children"),
         prevent_initial_call=True,
@@ -63,7 +68,7 @@ def get_callbacks(app):
 
         df = pd.read_csv(fileloc)
         options = [{"label": col, "value": col} for col in df.columns]
-        return options, options
+        return options, options, options, options, options, options, options
 
     @app.callback(
         [
@@ -111,6 +116,7 @@ def get_callbacks(app):
         [
             Output("hidden-div-graph-type", "children"),
             Output("advanced-scatter-options", "style"),
+            Output("advanced-histogram-options", "style"),
         ],
         Input("graph-type-dropdown", "value"),
         State("user-experience", "children"),
@@ -121,13 +127,15 @@ def get_callbacks(app):
 
         inv = {"display": "none"}
         vis = {"display": "flex"}
-        scatter_options_vis = inv
+        advanced_menus_vis = inv, inv
         if graph_type == "scatterplot" and exp >= 250:
-            scatter_options_vis = vis
-        return graph_type, scatter_options_vis
+            advanced_menus_vis = vis, inv
+        elif graph_type == "histogram" and exp >= 250:
+            advanced_menus_vis = inv, vis
+        return graph_type, *advanced_menus_vis
 
     @callback(
-        Output("hidden-div-size", "children"),
+        Output("hidden-div-size", "children", allow_duplicate=True),
         Input("dropdown-size", "value"),
         prevent_initial_call=True,
     )
@@ -136,7 +144,7 @@ def get_callbacks(app):
         return size
 
     @callback(
-        Output("hidden-div-color", "children"),
+        Output("hidden-div-color", "children", allow_duplicate=True),
         Input("dropdown-color", "value"),
         prevent_initial_call=True,
     )
@@ -145,8 +153,26 @@ def get_callbacks(app):
         return color
 
     @callback(
-        Output("hidden-div-hovername", "children"),
+        Output("hidden-div-hovername", "children", allow_duplicate=True),
         Input("dropdown-hovername", "value"),
+        prevent_initial_call=True,
+    )
+    def update_hovername(hovername):
+        print(f"Updated hovername with {hovername}")
+        return hovername
+
+    @callback(
+        Output("hidden-div-color", "children", allow_duplicate=True),
+        Input("dropdown-color-hist", "value"),
+        prevent_initial_call=True,
+    )
+    def update_color(color):
+        print(f"Updated color with {color}")
+        return color
+
+    @callback(
+        Output("hidden-div-hovername", "children", allow_duplicate=True),
+        Input("dropdown-hovername-hist", "value"),
         prevent_initial_call=True,
     )
     def update_hovername(hovername):
@@ -227,7 +253,17 @@ def get_callbacks(app):
         ],
         prevent_initial_call=True,
     )
-    def add_component(n, container_fill_type, xcol, ycol, graph_type, ds, size, color, hovername):
+    def add_component(
+        n,
+        container_fill_type,
+        xcol,
+        ycol,
+        graph_type,
+        ds,
+        size,
+        color,
+        hovername,
+    ):
         print("trying to add graph with clicks:", n)
         if n is None or n <= 0:
             return no_update
@@ -235,7 +271,9 @@ def get_callbacks(app):
         ctx = callback_context
 
         if container_fill_type == 0:
-            component = get_graph(ctx, ds, graph_type, xcol, ycol, size, color, hovername)
+            component = get_graph(
+                ctx, ds, graph_type, xcol, ycol, size, color, hovername
+            )
         else:
             component = get_table(ds)
 

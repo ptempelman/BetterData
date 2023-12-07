@@ -225,12 +225,13 @@ body {
     margin: 5px;
 }
 
-#advanced-scatter-options {
+.advanced-options {
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: center;
+    justify-content: left;
     width: 100%;
+    margin: 5px;
 }
 
 .main-graph {

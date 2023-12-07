@@ -98,7 +98,39 @@ def render_graph_menu_modal(df):
                                 placeholder="y-axis",
                             ),
                             html.Div(
+                                id="advanced-histogram-options",
+                                className="advanced-options",
+                                style={"display": "none"},
+                                children=[
+                                    html.Div("Optional"),
+                                    dcc.Dropdown(
+                                        id="dropdown-hovername-hist",
+                                        style={"display": "none"},
+                                        options=[
+                                            {"label": col, "value": col}
+                                            for col in df.columns
+                                        ],
+                                        className="dropdown-small",
+                                        value="",
+                                        searchable=True,
+                                        placeholder="hovername",
+                                    ),
+                                    dcc.Dropdown(
+                                        id="dropdown-color-hist",
+                                        options=[
+                                            {"label": col, "value": col}
+                                            for col in df.columns
+                                        ],
+                                        className="dropdown-small",
+                                        value="",
+                                        searchable=True,
+                                        placeholder="color",
+                                    ),
+                                ],
+                            ),
+                            html.Div(
                                 id="advanced-scatter-options",
+                                className="advanced-options",
                                 style={"display": "none"},
                                 children=[
                                     html.Div("Optional"),
