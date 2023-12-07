@@ -11,18 +11,6 @@ def render_graph_grid():
     return html.Div(
         id="content-container",
         children=[
-            # html.Button(
-            #     id="view-menu",
-            #     n_clicks=0,
-            #     children=[
-            #         html.Img(
-            #             id="view-menu-img",
-            #             src="assets/bar_chart_FILL0_wght400_GRAD0_opsz24.svg",
-            #         )
-            #     ],
-            # ),
-            # Table view: filled by callback
-            html.Div(id="table-view-container", style={"display": "none"}),
             html.Div(
                 id="graph-view-container",
                 className="grid-container",

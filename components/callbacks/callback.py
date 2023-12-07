@@ -24,6 +24,23 @@ import dash_bootstrap_components as dbc
 import dash_draggable
 
 
+def check_levelup(exp, cur_level):
+    new_level = cur_level
+    if (
+        (exp < 100 and exp + 40 >= 100)
+        or (exp < 250 and exp + 40 >= 250)
+        or (exp < 400 and exp + 40 >= 400)
+    ):
+        if exp + 40 >= 100:
+            new_level = "Contributor"
+        if exp + 40 >= 250:
+            new_level = "Master"
+        if exp + 40 >= 400:
+            new_level = "Grandmaster"
+        return True, new_level
+    return False, new_level
+
+
 def get_callbacks(app):
     filenames = [
         filename[:-4]
@@ -60,7 +77,7 @@ def get_callbacks(app):
             return no_update
 
         return [filename]
-    
+
     @app.callback(
         [
             Output("hidden-div-dataset", "children", allow_duplicate=True),
@@ -73,55 +90,6 @@ def get_callbacks(app):
             return no_update
 
         return [filename]
-
-    # # @app.callback(
-    # #     [
-    # #         Output(f"dynamic-sidebar-option-{filename}", "className")
-    # #         for filename in filenames
-    # #     ]
-    # #     + [
-    # #         Output("hidden-div-dataset", "children"),
-    # #         Output("xaxis-column", "options"),
-    # #         Output("yaxis-column", "options"),
-    # #         Output("table-view-container", "children"),
-    # #     ],
-    # #     [
-    # #         Input(f"dynamic-sidebar-option-{filename}", "n_clicks")
-    # #         for filename in filenames
-    # #     ],
-    # #     prevent_initial_call=True,
-    # # )
-    # # def update_button_color(*btn_clicks):
-    # #     ctx = callback_context
-    # #     clicked_btn_id = ctx.triggered[0]["prop_id"].split(".")[0]
-
-    # #     default_style = "sidebar-option"
-    # #     active_style = "sidebar-option-selected"
-    # #     styles = [default_style for _ in range(len(filenames))]
-
-    # #     if clicked_btn_id.rsplit("-", 1)[-1] in filenames:
-    # #         clicked_btn_index = filenames.index(clicked_btn_id.rsplit("-", 1)[-1])
-    # #         styles[clicked_btn_index] = active_style
-
-    # #     filename = clicked_btn_id.replace("dynamic-sidebar-option-", "") + ".csv"
-    # #     fileloc = osp.join(osp.dirname(data.__file__), filename)
-
-    # #     df = pd.read_csv(fileloc)
-    # #     options = [{"label": col, "value": col} for col in df.columns]
-
-    # #     table_view = dash_table.DataTable(
-    # #         id="table",
-    # #         columns=[{"name": i, "id": i} for i in df.columns],
-    # #         data=df.to_dict("records"),
-    # #         style_header={
-    # #             "color": "white",
-    # #             "background-color": "#7d7d7d",
-    # #             "border": "1px solid black",
-    # #         },
-    # #         style_cell={"border": "1px solid grey"},
-    # #     )
-
-    # #     return styles + [filename, options, options, [table_view]]
 
     @callback(
         Output("hidden-div-xdropdown", "children"),
@@ -162,12 +130,14 @@ def get_callbacks(app):
         [
             Output("modal", "is_open", allow_duplicate=True),
             Output("total-modal-clicks", "children", allow_duplicate=True),
+            Output("graph-type-dropdown", "style"),
+            Output({"type": "add-menu-type", "index": 1}, "style"),
         ],
         Input({"type": "open-button", "index": ALL}, "n_clicks"),
-        State("total-modal-clicks", "children"),
+        [State("total-modal-clicks", "children"), State("user-experience", "children")],
         prevent_initial_call=True,
     )
-    def open_modal(n_clicks, total_clicks):
+    def open_modal(n_clicks, total_clicks, exp):
         print(
             "trying to open modal with clicks:", n_clicks, " and total:", total_clicks
         )
@@ -175,7 +145,20 @@ def get_callbacks(app):
         if n_clicks is None or sum(n_clicks) != total_clicks + 1:
             return no_update
         print(f"modal opened\n")
-        return True, total_clicks + 1
+
+        inv = {"display": "none"}
+        vis = {"display": "block"}
+        contributor_vis = inv
+        print(exp)
+        if int(exp) >= 100:
+            contributor_vis = vis
+
+        return (
+            True,
+            total_clicks + 1,
+            contributor_vis,
+            contributor_vis,
+        )
 
     @callback(
         [
@@ -203,31 +186,44 @@ def get_callbacks(app):
         ],
         prevent_initial_call=True,
     )
-    def add_component(
-        n,
-        container_fill_type,
-        xcol,
-        ycol,
-        graph_type,
-        ds,
-    ):
+    def add_component(n, container_fill_type, xcol, ycol, graph_type, ds):
         print("trying to add graph with clicks:", n)
         if n is None or n <= 0:
             return no_update
-        
+
         ctx = callback_context
 
         if container_fill_type == 0:
             component = get_graph(ctx, ds, graph_type, xcol, ycol)
-        # elif container_fill_type == 0:
         else:
             component = get_table(ds)
-            
-            
+
         inv = {"display": "none"}
         vis = {"display": "unset"}
 
         return component, inv, vis
+
+    @callback(
+        [
+            Output("user-experience", "children"),
+            Output("levelup-modal", "is_open"),
+            Output("old-user-level", "children"),
+            Output("new-user-level", "children"),
+        ],
+        [Input({"type": "add-graph-button", "index": ALL}, "n_clicks")],
+        [
+            State("user-experience", "children"),
+            State("new-user-level", "children"),
+        ],
+        prevent_initial_call=True,
+    )
+    def check_levelup_after_add(n, exp, cur_level):
+        print("checking levelup", n)
+        if n is None or n[0] <= 0:
+            return no_update
+
+        levelup, new_level = check_levelup(exp, cur_level)
+        return exp + 40, levelup, cur_level, new_level
 
     @app.callback(
         [
@@ -283,23 +279,6 @@ def get_callbacks(app):
         )
 
         return mc
-
-    # @app.callback(
-    #     [
-    #         Output("view-menu-img", "src"),
-    #         Output("graph-view-container", "style"),
-    #         Output("table-view-container", "style"),
-    #     ],
-    #     [Input("view-menu", "n_clicks")],
-    #     prevent_initial_call=True,
-    # )
-    # def toggle_view(vm):
-    #     inv = {"display": "none"}
-    #     vis = {"display": "grid"}
-    #     if vm % 2 == 1:
-    #         return "assets/table_FILL0_wght400_GRAD0_opsz24.svg", inv, vis
-    #     else:
-    #         return "assets/bar_chart_FILL0_wght400_GRAD0_opsz24.svg", vis, inv
 
     @callback(
         [
@@ -370,7 +349,7 @@ def get_callbacks(app):
             Output("menu-switch-clicks", "children"),
         ],
         Input({"type": "add-menu-type", "index": ALL}, "n_clicks"),
-        State("menu-switch-clicks", "children")
+        State("menu-switch-clicks", "children"),
     )
     def switch_menus(n_clicks, total_clicks):
         print("trying to switch menus with", n_clicks)

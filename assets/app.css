@@ -354,3 +354,53 @@ body {
     visibility: visible;
     position: absolute;
 }
+
+#levelup-modal {
+    width: 600px;
+    height: 400px;
+}
+
+#levelup-modal-body {
+    background: linear-gradient(to bottom right, #CDA2D5, cyan) !important;
+    height: 300px;
+    width: 100%;
+}
+
+#levelup-message-container {
+    display: flex;
+    /* Enable Flexbox */
+    flex-direction: row;
+    /* Stack children vertically */
+    align-items: flex-start;
+    /* Align items to the start of the container */
+    height: 300px;
+    justify-content: center;
+    /* Center horizontally */
+    align-items: center;
+    /* Set a specific height for the container */
+}
+
+.levelup-msg {
+    margin: 5px;
+    font-size: 20px;
+    font-family: 'Arial', sans-serif;
+    font-weight: bold;
+}
+
+.levelup-msg-level-from {
+    /* Makes the text bold */
+    background: linear-gradient(45deg, blue, red);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: inline-block;
+}
+
+.levelup-msg-level-to {
+    /* Makes the text bold */
+    background: linear-gradient(45deg, #dec520, #ff45bb);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: inline-block;
+}

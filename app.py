@@ -4,6 +4,8 @@ from dash import Dash, html
 
 import ssl
 
+from components.modals.levelup_modal import render_levelup_modal
+
 ssl._create_default_https_context = ssl._create_unverified_context
 
 from components.callbacks.callback import get_callbacks
@@ -43,20 +45,22 @@ app.layout = html.Div(
                 ),
                 html.Div(id="hidden-div", style={"display": "none"}),
                 html.Div(id="hidden-div-dataset", style={"display": "none"}),
-                html.Div(id="hidden-div-graph-type", style={"display": "none"}),
+                html.Div(id="hidden-div-graph-type", style={"display": "none"}, children="histogram"),
                 html.Div(id="hidden-div-xdropdown", style={"display": "none"}),
                 html.Div(id="hidden-div-ydropdown", style={"display": "none"}),
+                html.Div(id="user-experience", style={"display": "none"}, children=0),
                 html.Div(
                     id="total-modal-clicks", style={"display": "none"}, children=0
                 ),
-                html.Div(
-                    id="total-edit-clicks", style={"display": "none"}, children=0
-                ),
+                html.Div(id="total-edit-clicks", style={"display": "none"}, children=0),
                 html.Div(
                     id="menu-switch-clicks", style={"display": "none"}, children=0
                 ),
-                html.Div(id="container-fill-type", style={"display": "none"}, children=0),
+                html.Div(
+                    id="container-fill-type", style={"display": "none"}, children=0
+                ),
                 render_graph_menu_modal(df),
+                render_levelup_modal(),
             ],
         ),
     ],
