@@ -220,6 +220,19 @@ body {
     margin: 5px;
 }
 
+.dropdown-small {
+    width: 120px;
+    margin: 5px;
+}
+
+#advanced-scatter-options {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
 .main-graph {
     width: 100%;
     height: 100%;

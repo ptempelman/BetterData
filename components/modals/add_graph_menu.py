@@ -97,6 +97,46 @@ def render_graph_menu_modal(df):
                                 searchable=True,
                                 placeholder="y-axis",
                             ),
+                            html.Div(
+                                id="advanced-scatter-options",
+                                style={"display": "none"},
+                                children=[
+                                    html.Div("Optional"),
+                                    dcc.Dropdown(
+                                        id="dropdown-size",
+                                        options=[
+                                            {"label": col, "value": col}
+                                            for col in df.columns
+                                        ],
+                                        className="dropdown-small",
+                                        value="",
+                                        searchable=True,
+                                        placeholder="size",
+                                    ),
+                                    dcc.Dropdown(
+                                        id="dropdown-color",
+                                        options=[
+                                            {"label": col, "value": col}
+                                            for col in df.columns
+                                        ],
+                                        className="dropdown-small",
+                                        value="",
+                                        searchable=True,
+                                        placeholder="color",
+                                    ),
+                                    dcc.Dropdown(
+                                        id="dropdown-hovername",
+                                        options=[
+                                            {"label": col, "value": col}
+                                            for col in df.columns
+                                        ],
+                                        className="dropdown-small",
+                                        value="",
+                                        searchable=True,
+                                        placeholder="hovername",
+                                    ),
+                                ],
+                            ),
                         ],
                     ),
                     html.Div(

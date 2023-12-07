@@ -45,9 +45,16 @@ app.layout = html.Div(
                 ),
                 html.Div(id="hidden-div", style={"display": "none"}),
                 html.Div(id="hidden-div-dataset", style={"display": "none"}),
-                html.Div(id="hidden-div-graph-type", style={"display": "none"}, children="histogram"),
+                html.Div(
+                    id="hidden-div-graph-type",
+                    style={"display": "none"},
+                    children="histogram",
+                ),
                 html.Div(id="hidden-div-xdropdown", style={"display": "none"}),
                 html.Div(id="hidden-div-ydropdown", style={"display": "none"}),
+                html.Div(id="hidden-div-size", style={"display": "none"}),
+                html.Div(id="hidden-div-color", style={"display": "none"}),
+                html.Div(id="hidden-div-hovername", style={"display": "none"}),
                 html.Div(id="user-experience", style={"display": "none"}, children=0),
                 html.Div(
                     id="total-modal-clicks", style={"display": "none"}, children=0

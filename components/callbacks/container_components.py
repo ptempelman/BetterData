@@ -23,9 +23,8 @@ import dash_bootstrap_components as dbc
 import dash_draggable
 
 
-def get_graph(ctx, ds, graph_type, xcol, ycol):
+def get_graph(ctx, ds, graph_type, xcol, ycol, size, color, hovername):
     print(f"graph added to {ctx.triggered[0]['prop_id'].split('.')[0]}")
-
     if graph_type == "histogram":
         graph = dcc.Graph(
             figure=px.histogram(
@@ -48,12 +47,18 @@ def get_graph(ctx, ds, graph_type, xcol, ycol):
             },
         )
     elif graph_type == "scatterplot":
+        size_setting = size if size != "" else None
+        color_setting = color if color != "" else None
+        hover_setting = hovername if hovername != "" else None
         graph = dcc.Graph(
             figure=px.scatter(
                 pd.read_csv(osp.join(osp.dirname(data.__file__), ds)),
                 x=xcol,
                 y=ycol,
                 template="plotly_dark",
+                size=size_setting,
+                color=color_setting,
+                hover_name=hover_setting
             ),
             className="main-graph",
             config={
@@ -67,7 +72,7 @@ def get_graph(ctx, ds, graph_type, xcol, ycol):
                 ],
             },
         )
-    else: # elif graph_type == "piechart":
+    else:  # elif graph_type == "piechart":
         graph = dcc.Graph(
             figure=px.pie(
                 pd.read_csv(osp.join(osp.dirname(data.__file__), ds)),

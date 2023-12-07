@@ -108,13 +108,50 @@ def get_callbacks(app):
         return col
 
     @callback(
-        Output("hidden-div-graph-type", "children"),
+        [
+            Output("hidden-div-graph-type", "children"),
+            Output("advanced-scatter-options", "style"),
+        ],
         Input("graph-type-dropdown", "value"),
+        State("user-experience", "children"),
         prevent_initial_call=True,
     )
-    def update_graph_type(graph_type):
+    def update_graph_type(graph_type, exp):
         print(f"Updated graph type with {graph_type}")
-        return graph_type
+
+        inv = {"display": "none"}
+        vis = {"display": "flex"}
+        scatter_options_vis = inv
+        if graph_type == "scatterplot" and exp >= 250:
+            scatter_options_vis = vis
+        return graph_type, scatter_options_vis
+
+    @callback(
+        Output("hidden-div-size", "children"),
+        Input("dropdown-size", "value"),
+        prevent_initial_call=True,
+    )
+    def update_size(size):
+        print(f"Updated size with {size}")
+        return size
+
+    @callback(
+        Output("hidden-div-color", "children"),
+        Input("dropdown-color", "value"),
+        prevent_initial_call=True,
+    )
+    def update_color(color):
+        print(f"Updated color with {color}")
+        return color
+
+    @callback(
+        Output("hidden-div-hovername", "children"),
+        Input("dropdown-hovername", "value"),
+        prevent_initial_call=True,
+    )
+    def update_hovername(hovername):
+        print(f"Updated hovername with {hovername}")
+        return hovername
 
     @callback(
         Output("modal", "is_open", allow_duplicate=True),
@@ -184,10 +221,13 @@ def get_callbacks(app):
             State("hidden-div-ydropdown", "children"),
             State("hidden-div-graph-type", "children"),
             State("hidden-div-dataset", "children"),
+            State("hidden-div-size", "children"),
+            State("hidden-div-color", "children"),
+            State("hidden-div-hovername", "children"),
         ],
         prevent_initial_call=True,
     )
-    def add_component(n, container_fill_type, xcol, ycol, graph_type, ds):
+    def add_component(n, container_fill_type, xcol, ycol, graph_type, ds, size, color, hovername):
         print("trying to add graph with clicks:", n)
         if n is None or n <= 0:
             return no_update
@@ -195,7 +235,7 @@ def get_callbacks(app):
         ctx = callback_context
 
         if container_fill_type == 0:
-            component = get_graph(ctx, ds, graph_type, xcol, ycol)
+            component = get_graph(ctx, ds, graph_type, xcol, ycol, size, color, hovername)
         else:
             component = get_table(ds)
 
