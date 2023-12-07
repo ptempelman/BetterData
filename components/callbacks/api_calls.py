@@ -8,9 +8,9 @@ def get_generated_graph(api_key, df, prompt):
     padded_prompt = f"""We will use your output directly to put into a dash plotly app, so only return code. 
         Only return a dcc.Graph component, nothing else. You have access to df which has columns:
         {df.columns}. Create everthing you need, including a px figure, inside the dcc.Graph, because we will 
-        only extract that component. So the fig must be created INSIDE the Dcc.Graph. The graph should be based 
-        on: {prompt}, use plotly express, px, to create the figure and give it template='plotly_dark', also give 
-        the dcc.Graph component: 
+        only extract that component. So the fig and everything else you need must be created INSIDE the Dcc.Graph. 
+        The graph should be based on: {prompt}, use plotly express, px, to create the figure and give it 
+        template='plotly_dark', also give the dcc.Graph component: 
         className="main-graph", and 
             config=
                 "displaylogo": False,
