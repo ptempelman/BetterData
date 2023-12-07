@@ -113,6 +113,7 @@ def get_callbacks(app):
         prevent_initial_call=True,
     )
     def update_graph_type(graph_type):
+        print(f"Updated graph type with {graph_type}")
         return graph_type
 
     @callback(

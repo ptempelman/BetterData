@@ -79,8 +79,8 @@ body {
 
 .sidebar {
     width: 16%;
-    height: 100%;
-    background: linear-gradient(to bottom, #000000, #494949)
+    height: 2000px;
+    background: linear-gradient(to bottom, #000000, #c8c8c8)
 }
 
 .sidebar-title {

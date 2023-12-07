@@ -47,12 +47,32 @@ def get_graph(ctx, ds, graph_type, xcol, ycol):
                 ],
             },
         )
-    else:  #  elif graph_type == "scatterplot":
+    elif graph_type == "scatterplot":
         graph = dcc.Graph(
             figure=px.scatter(
                 pd.read_csv(osp.join(osp.dirname(data.__file__), ds)),
                 x=xcol,
                 y=ycol,
+                template="plotly_dark",
+            ),
+            className="main-graph",
+            config={
+                "displaylogo": False,
+                "modeBarButtonsToRemove": [
+                    "zoom",
+                    "pan",
+                    "select2d",
+                    "lasso2d",
+                    "autoscale",
+                ],
+            },
+        )
+    else: # elif graph_type == "piechart":
+        graph = dcc.Graph(
+            figure=px.pie(
+                pd.read_csv(osp.join(osp.dirname(data.__file__), ds)),
+                names=xcol,
+                values=ycol,
                 template="plotly_dark",
             ),
             className="main-graph",
