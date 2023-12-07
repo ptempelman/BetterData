@@ -55,6 +55,7 @@ app.layout = html.Div(
                 html.Div(id="hidden-div-size", style={"display": "none"}),
                 html.Div(id="hidden-div-color", style={"display": "none"}),
                 html.Div(id="hidden-div-hovername", style={"display": "none"}),
+                html.Div(id="hidden-div-graph-prompt", style={"display": "none"}),
                 html.Div(id="user-experience", style={"display": "none"}, children=0),
                 html.Div(
                     id="total-modal-clicks", style={"display": "none"}, children=0

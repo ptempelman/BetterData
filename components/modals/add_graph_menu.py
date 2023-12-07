@@ -214,7 +214,12 @@ def render_graph_menu_modal(df):
                                 value="",
                                 searchable=True,
                                 placeholder="dataset",
-                            )
+                            ),
+                            dcc.Textarea(
+                                id="input-prompt-ai",
+                                placeholder="graph creation instructions",
+                                value="",
+                            ),
                         ],
                     ),
                 ],

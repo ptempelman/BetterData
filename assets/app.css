@@ -424,3 +424,10 @@ body {
     color: transparent;
     display: inline-block;
 }
+
+#input-prompt-ai {
+    width: 300px;
+    border: 1px solid #b9b9b9;
+    border-radius: 2px;
+    margin: 5px;
+}

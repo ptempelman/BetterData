@@ -211,6 +211,7 @@ def get_callbacks(app):
             Output("total-modal-clicks", "children", allow_duplicate=True),
             Output("graph-type-dropdown", "style"),
             Output({"type": "add-menu-type", "index": 1}, "style"),
+            Output({"type": "add-menu-type", "index": 2}, "style"),
         ],
         Input({"type": "open-button", "index": ALL}, "n_clicks"),
         [State("total-modal-clicks", "children"), State("user-experience", "children")],
@@ -228,16 +229,20 @@ def get_callbacks(app):
         inv = {"display": "none"}
         vis = {"display": "block"}
         contributor_vis = inv
+        master_vis = inv
         print(exp)
         if int(exp) >= 100:
             contributor_vis = vis
+        if int(exp) >= 250:
+            master_vis = vis
 
-        return (
-            True,
-            total_clicks + 1,
-            contributor_vis,
-            contributor_vis,
-        )
+        return (True, total_clicks + 1, contributor_vis, contributor_vis, master_vis)
+
+    @callback(
+        Output("hidden-div-graph-prompt", "children"), Input("input-prompt-ai", "value")
+    )
+    def update_prompt(prompt):
+        return prompt
 
     @callback(
         [
@@ -265,6 +270,7 @@ def get_callbacks(app):
             State("hidden-div-size", "children"),
             State("hidden-div-color", "children"),
             State("hidden-div-hovername", "children"),
+            State("hidden-div-graph-prompt", "children"),
         ],
         prevent_initial_call=True,
     )
@@ -278,6 +284,7 @@ def get_callbacks(app):
         size,
         color,
         hovername,
+        prompt,
     ):
         print("trying to add graph with clicks:", n)
         if n is None or n <= 0:
@@ -300,22 +307,14 @@ def get_callbacks(app):
                 pred = get_generated_graph(
                     api_key=api_key,
                     df=df,
-                    prompt="a histogram of gdppercap vs continent",
+                    prompt=prompt,
                 )
-            graph = None
             pred = f"graph = {pred}"
             print(pred)
-            namespace = {'df': df, 'dcc': dcc, 'go': go, 'px': px}
+            namespace = {"df": df, "dcc": dcc, "go": go, "px": px}
 
             exec(pred, namespace)
-            component = namespace['graph']
-            # print(component)
-
-            # exec("a = 10; b = 20; sum = a + b", globals())
-
-            # print("a:", globals().get('a'))
-            # print("b:", globals().get('b'))
-            # print("sum:", globals().get('sum'))
+            component = namespace["graph"]
 
         inv = {"display": "none"}
         vis = {"display": "unset"}
