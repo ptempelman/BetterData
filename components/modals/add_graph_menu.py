@@ -200,7 +200,22 @@ def render_graph_menu_modal(df):
                     html.Div(
                         id={"type": "menu-type", "index": 2},
                         style={"display": "none"},
-                        children="hello",
+                        children=[
+                            dcc.Dropdown(
+                                id="dataset-dropdown-ai",
+                                options=[
+                                    {"label": filename, "value": filename}
+                                    for filename in os.listdir(
+                                        os.path.dirname(data.__file__)
+                                    )
+                                    if filename.endswith(".csv")
+                                ],
+                                className="dropdown",
+                                value="",
+                                searchable=True,
+                                placeholder="dataset",
+                            )
+                        ],
                     ),
                 ],
             ),

@@ -10,8 +10,10 @@ from dash import (
     ALL,
     no_update,
 )
+import plotly.graph_objects as go
 import pandas as pd
 import plotly.express as px
+from components.callbacks.api_calls import get_generated_graph
 from components.callbacks.container_components import get_graph, get_table
 from components.content.dashboard_item import render_dashboard_item
 import data
@@ -88,6 +90,19 @@ def get_callbacks(app):
             Output("hidden-div-dataset", "children", allow_duplicate=True),
         ],
         Input("dataset-dropdown-table", "value"),
+        prevent_initial_call=True,
+    )
+    def update_dataset(filename):
+        if not filename:
+            return no_update
+
+        return [filename]
+
+    @app.callback(
+        [
+            Output("hidden-div-dataset", "children", allow_duplicate=True),
+        ],
+        Input("dataset-dropdown-ai", "value"),
         prevent_initial_call=True,
     )
     def update_dataset(filename):
@@ -270,12 +285,37 @@ def get_callbacks(app):
 
         ctx = callback_context
 
+        print(ds)
+
+        df = pd.read_csv(osp.join(osp.dirname(data.__file__), ds))
         if container_fill_type == 0:
             component = get_graph(
-                ctx, ds, graph_type, xcol, ycol, size, color, hovername
+                ctx, df, graph_type, xcol, ycol, size, color, hovername
             )
-        else:
+        elif container_fill_type == 1:
             component = get_table(ds)
+        else:
+            with open("openai_api_key.txt", "r", encoding="utf-8") as file:
+                api_key: str = file.read()
+                pred = get_generated_graph(
+                    api_key=api_key,
+                    df=df,
+                    prompt="a histogram of gdppercap vs continent",
+                )
+            graph = None
+            pred = f"graph = {pred}"
+            print(pred)
+            namespace = {'df': df, 'dcc': dcc, 'go': go, 'px': px}
+
+            exec(pred, namespace)
+            component = namespace['graph']
+            # print(component)
+
+            # exec("a = 10; b = 20; sum = a + b", globals())
+
+            # print("a:", globals().get('a'))
+            # print("b:", globals().get('b'))
+            # print("sum:", globals().get('sum'))
 
         inv = {"display": "none"}
         vis = {"display": "unset"}
