@@ -275,6 +275,12 @@ body {
     /* border: 1px solid white; */
     margin-right: 10px;
     border: 0;
+    color: white;
+    font-size: 22px;
+}
+
+#graph-menu-ai-button {
+    margin-top: 5px;
 }
 
 .view-menu-button:hover {

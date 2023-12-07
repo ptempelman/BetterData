@@ -29,6 +29,12 @@ def render_graph_menu_modal(df):
                             )
                         ],
                     ),
+                    html.Button(
+                        id={"type": "add-menu-type", "index": 2},
+                        className="view-menu-button",
+                        n_clicks=0,
+                        children=[html.Div(id="graph-menu-ai-button", children="AI")],
+                    ),
                 ]
             ),
             dbc.ModalBody(
@@ -190,6 +196,11 @@ def render_graph_menu_modal(df):
                                 placeholder="dataset",
                             )
                         ],
+                    ),
+                    html.Div(
+                        id={"type": "menu-type", "index": 2},
+                        style={"display": "none"},
+                        children="hello",
                     ),
                 ],
             ),
