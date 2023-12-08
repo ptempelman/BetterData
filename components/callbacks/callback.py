@@ -233,7 +233,7 @@ def get_callbacks(app):
         print(exp)
         if int(exp) >= 100:
             contributor_vis = vis
-        if int(exp) >= 250:
+        if int(exp) >= 400:
             master_vis = vis
 
         return (True, total_clicks + 1, contributor_vis, contributor_vis, master_vis)
@@ -327,6 +327,7 @@ def get_callbacks(app):
             Output("levelup-modal", "is_open"),
             Output("old-user-level", "children"),
             Output("new-user-level", "children"),
+            Output("levelup-functionality-image", "src"),
         ],
         [Input({"type": "add-graph-button", "index": ALL}, "n_clicks")],
         [
@@ -341,7 +342,8 @@ def get_callbacks(app):
             return no_update
 
         levelup, new_level = check_levelup(exp, cur_level)
-        return exp + 40, levelup, cur_level, new_level
+        image_src = f"assets/{new_level.lower()}.png"
+        return exp + 40, levelup, cur_level, new_level, image_src
 
     @app.callback(
         [

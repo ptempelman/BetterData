@@ -13,11 +13,11 @@ def render_levelup_modal():
                         id="levelup-modal-body",
                         children=[
                             html.Div(
-                                id="levelup-message-container",
+                                className="levelup-message-container",
                                 children=[
                                     html.Div(
                                         className="levelup-msg",
-                                        children="You leveled up from ",
+                                        children="Level up! From ",
                                     ),
                                     html.Div(
                                         id="old-user-level",
@@ -33,12 +33,26 @@ def render_levelup_modal():
                                         className="levelup-msg levelup-msg-level-to",
                                         children="Novice",
                                     ),
+                                ],
+                            ),
+                            html.Div(
+                                className="levelup-message-container",
+                                children=[
                                     html.Div(
                                         className="levelup-msg",
-                                        children="!",
+                                        children="You unlocked: ",
                                     ),
                                 ],
-                            )
+                            ),
+                            html.Img(
+                                id="levelup-functionality-image",
+                                src="assets/master.png",
+                                style={
+                                    "height": "auto",
+                                    "width": "90%",
+                                    "margin": "5%",
+                                },
+                            ),
                         ],
                     )
                 ],
