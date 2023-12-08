@@ -1,6 +1,6 @@
 import dash_bootstrap_components as dbc
 import pandas as pd
-from dash import Dash, html
+from dash import Dash, html, Output, Input
 
 import ssl
 
@@ -24,6 +24,9 @@ external_stylesheets = [dbc.themes.BOOTSTRAP]
 app = Dash(
     __name__,
     external_stylesheets=external_stylesheets,
+    external_scripts=[
+        "https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"
+    ],
     suppress_callback_exceptions=True,
 )
 
@@ -67,11 +70,33 @@ app.layout = html.Div(
                 html.Div(
                     id="container-fill-type", style={"display": "none"}, children=0
                 ),
+                html.Div(id="confetti-trigger", style={"display": "none"}),
+                html.Div(id="dummy-output", style={"display": "none"}),
                 render_graph_menu_modal(df),
                 render_levelup_modal(),
             ],
         ),
     ],
+)
+
+
+app.clientside_callback(
+    """
+    function(n_clicks) {
+        if(n_clicks){
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+            setTimeout(function() {
+                confetti.reset();
+            }, 3000); // 3000 milliseconds = 3 seconds
+        }
+    }
+    """,
+    Output("dummy-output", "children"),  # Another dummy output
+    [Input("confetti-trigger", "children")],
 )
 
 

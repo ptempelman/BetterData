@@ -328,6 +328,7 @@ def get_callbacks(app):
             Output("old-user-level", "children"),
             Output("new-user-level", "children"),
             Output("levelup-functionality-image", "src"),
+            Output("confetti-trigger", "children"),
         ],
         [Input({"type": "add-graph-button", "index": ALL}, "n_clicks")],
         [
@@ -343,7 +344,12 @@ def get_callbacks(app):
 
         levelup, new_level = check_levelup(exp, cur_level)
         image_src = f"assets/{new_level.lower()}.png"
-        return exp + 40, levelup, cur_level, new_level, image_src
+
+        confetti_trigger = no_update
+        if levelup:
+            confetti_trigger = "trigger"
+
+        return exp + 40, levelup, cur_level, new_level, image_src, confetti_trigger
 
     @app.callback(
         [
